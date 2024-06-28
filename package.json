@@ -16,5 +16,8 @@
     "license": "ISC",
     "devDependencies": {
         "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "prop-types": "^15.8.1"
     }
-    }
+}
