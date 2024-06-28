@@ -3,16 +3,22 @@ const typeDefs = `
         _id: ID!
         firstName: String!
         lastName: String!
+        Transactions: [Transaction]
     }
-    type Transactions {
+    type Transaction {
         _id: ID!
-        Amount: Dec!
+        Amount: Float!
         Description: String!
-        Date: Date
+        Date: String!
+        Category: Category
     }
-    type Categories {
+    type Category {
         _id: ID!
         categoryName: String!
+    }
+    type Query {
+        getUser(userid: ID!): User
+        getTransaction(transactionId: ID!): Transaction
     }
 `;
 

@@ -1,13 +1,12 @@
-const { User, Transactions } = require('../models');
+const { User, Transaction } = require('../models'); 
 
 const resolvers = {
     Query: {
-        user: async () => {
-            return User.find({});
+        getUser: async (parent, {userId}) => {
+            return User.findById({userId});
         },
-        transactions: async (parent, {_Id}) => {
-            const params = _id ? { _id } : {};
-            return Transactions.find(params);
+        getTransaction: async (parent, {transactionId}) => {
+            return Transaction.findById(transactionId);
         },
     },
 };
