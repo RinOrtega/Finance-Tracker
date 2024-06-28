@@ -17,8 +17,8 @@ const typeDefs = `
         categoryName: String!
     }
     type Query {
-        getUser(userid: ID!): User
-        getTransaction(transactionId: ID!): Transaction
+        getUser(_id: ID!): User
+        getTransaction(_id: ID!): Transaction
     }
 `;
 
