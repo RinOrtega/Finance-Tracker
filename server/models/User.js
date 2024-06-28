@@ -21,7 +21,7 @@ const userSchema = new Schema (
 
 // creat a virtual property to show full name to better set users full name based off info from schema
 userSchema
-    .virtuals('fullName')
+    .virtual('fullName')
     // Getter
     .get(function() {
         return `${this.firstName} ${this.lastName}`;

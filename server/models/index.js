@@ -1,3 +1,5 @@
 const User = require('./User');
-const Transactions = require('./Transaction');
+const Transaction = require('./Transaction');
 const Category = require('./Category')
+
+module.exports = {User, Transaction};
