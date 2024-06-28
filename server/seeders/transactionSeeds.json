@@ -1,0 +1,20 @@
+[
+    {
+        "Amount": 44.77,
+        "Descriptions": "Test transaction",
+        "Date":"03-16-2020",
+        "userId": 1 
+    },
+    {
+        "Amount": -61.23,
+        "Descriptions": "Utils",
+        "Date":"03-20-2020",
+        "userId": 1 
+    },
+    {
+        "Amount": 852.52,
+        "Descriptions": "Paycheck",
+        "Date":"03-22-2020",
+        "userId": 1 
+    }
+]
