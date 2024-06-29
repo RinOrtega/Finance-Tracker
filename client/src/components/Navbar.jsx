@@ -8,7 +8,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';    
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
@@ -78,6 +78,7 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                     : '0 0 1px rgba(2, 31, 59, 0.7), 1px 1.5px 2px -1px rgba(2, 31, 59, 0.65), 4px 4px 12px -2.5px rgba(2, 31, 59, 0.65)',
                         })}
                     >
+                        {/* Box with the logo and the page hyperlinks */}
                         <Box
                             sx={{
                                 flexGrow: 1,
@@ -87,56 +88,69 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                 px: 2,
                             }}
                         >
-                            <img
-                                src={logo}
-                                style={logoStyle}
-                                alt="logo of FT"
-                            />
-                            <Box sx={{ display: { xs: 'none', md: 'flex' }, ml:5  }}>
-                                
-                                <MenuItem   >
-                                    <Typography variant="body2" color="text.primary">
-                                        Tracker
-                                    </Typography>
-                                </MenuItem>
-                                <MenuItem
-                                    
-                                >
-                                    <Typography variant="body2" color="text.primary">
-                                        Highlights
-                                    </Typography>
-                                </MenuItem>
-                                
+                            <Link to="/">
+                                <img
+                                    src={logo}
+                                    style={logoStyle}
+                                    alt="logo of FT"
+                                />
+                            </Link>
+                            <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 5 }}>
+                                <Link to="/tracker">
+                                    <MenuItem sx={{ py: '6px', px: '12px' }}  >
+                                        <Typography variant="body2" color="text.primary">
+                                            Tracker
+                                        </Typography>
+
+                                    </MenuItem>
+                                </Link>
+                                <Link to="/me">
+                                    <MenuItem sx={{ py: '6px', px: '12px' }}  >
+                                        <Typography variant="body2" color="text.primary">
+                                            Profile
+                                        </Typography>
+
+                                    </MenuItem>
+                                </Link>
+
                             </Box>
                         </Box>
+
+                        {/* buttons on the rigt side of the navbar */}
                         <Box
                             sx={{
                                 display: { xs: 'none', md: 'flex' },
-                                gap: 0.5,
-                                alignItems: 'center',
+                                gap: 1,
+                                alignItems: 'center'
                             }}
                         >
+                            {/* This is the dark mode toggle component */}
+
                             <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-                            <Button
-                                color="primary"
-                                variant="text"
-                                size="small"
-                                component="a"
-                                href="/material-ui/getting-started/templates/sign-in/"
-                                target="_blank"
-                            >
-                                Sign in
-                            </Button>
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                size="small"
-                                component="a"
-                                href="/material-ui/getting-started/templates/sign-up/"
-                                target="_blank"
-                            >
-                                Sign up
-                            </Button>
+
+                            {/* These are the Login and the Sign up buttons. */}
+                            <Link to="/login">
+                                <Button
+                                    color="primary"
+                                    variant="text"
+                                    size="small"
+                                >
+                                    Login
+                                </Button>
+                            </Link>
+
+                            <Link to="/signup">
+                                <Button
+                                    color="primary"
+                                    variant="contained"
+                                    size="small"
+                                    component="a"
+                                    to="/signup"
+                                    target="_blank"
+                                >
+                                    Sign up
+                                </Button>
+                            </Link>
                         </Box>
                         <Box sx={{ display: { sm: '', md: 'none' } }}>
                             <Button
@@ -148,6 +162,8 @@ const Navbar = ({ mode, toggleColorMode }) => {
                             >
                                 <MenuIcon />
                             </Button>
+
+                            {/* This is a drawer component that will be used in smaller screens to show the menu buttons above and the pages */}
                             <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
                                 <Box
                                     sx={{
@@ -167,37 +183,47 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                     >
                                         <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                                     </Box>
-                                    <MenuItem  >
-                                        Tracker
-                                    </MenuItem>
-                                    <MenuItem >
-                                        Profile
-                                    </MenuItem>
+                                    <Link to="/tracker">
+                                        <MenuItem  >
+                                            Tracker
+                                        </MenuItem>
+                                    </Link>
+
+                                    <Link to="/me">
+                                        <MenuItem  >
+                                            Profile
+                                        </MenuItem>
+                                    </Link>
+
                                     <Divider />
-                                    <MenuItem>
-                                        <Button
-                                            color="primary"
-                                            variant="contained"
-                                            component="a"
-                                            href="../pages/signup"
-                                            target="_blank"
-                                            sx={{ width: '100%' }}
-                                        >
-                                            Sign up
-                                        </Button>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <Button
-                                            color="primary"
-                                            variant="outlined"
-                                            component="a"
-                                            href="../pages/login"
-                                            target="_blank"
-                                            sx={{ width: '100%' }}
-                                        >
-                                            Login
-                                        </Button>
-                                    </MenuItem>
+                                    < Link to="/login">
+                                        <MenuItem>
+                                            <Button
+                                                color="primary"
+                                                variant="contained"
+                                                component="a"
+                                                href="../pages/signup"
+                                                target="_blank"
+                                                sx={{ width: '100%' }}
+                                            >
+                                                Sign up
+                                            </Button>
+                                        </MenuItem>
+                                    </Link>
+                                    <Link to="/login">
+                                        <MenuItem>
+                                            <Button
+                                                color="primary"
+                                                variant="outlined"
+                                                component="a"
+                                                href="../pages/login"
+                                                target="_blank"
+                                                sx={{ width: '100%' }}
+                                            >
+                                                Login
+                                            </Button>
+                                        </MenuItem>
+                                    </Link>
                                 </Box>
                             </Drawer>
                         </Box>

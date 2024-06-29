@@ -2,6 +2,7 @@ import {React, useState} from 'react';
 import PropTypes from 'prop-types';
 import Navbar from './components/Navbar'
 import './App.css'
+import { Outlet } from 'react-router-dom';
 
 
 function App() {
@@ -15,8 +16,13 @@ function App() {
 
   return (
     <>
-        <Navbar mode={mode} toggleColorMode={toggleColorMode} />
 
+        <div>
+        <Navbar mode={mode} toggleColorMode={toggleColorMode} />
+        <div>
+        <Outlet/>
+        </div>
+        </div>
     </>
   )
 }
