@@ -196,7 +196,7 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                     </Link>
 
                                     <Divider />
-                                    < Link to="/login">
+                                    < Link to="/signup">
                                         <MenuItem>
                                             <Button
                                                 color="primary"
