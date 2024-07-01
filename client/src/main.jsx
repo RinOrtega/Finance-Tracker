@@ -10,7 +10,7 @@ import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile.jsx";
 import Error from "./pages/Error.jsx";
-import Tracker from "./pages/Tracker.jsx";
+import Dashboard from "./pages/Dashboard";
 
 
 
@@ -33,8 +33,8 @@ const router = createBrowserRouter([
         path: "/me",
         element: <Profile />
       }, {
-        path: "/tracker",
-        element: <Tracker />
+        path: "/dashboard",
+        element: <Dashboard />
       }
     ]
   }
