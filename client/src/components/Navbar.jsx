@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg"
 
 // importing material ui components
-import Box from '@mui/material/Box';
+
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
@@ -15,6 +15,7 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from './ToggleColorMode';
 import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
 
 const logoStyle = {
     width: '50px',
@@ -144,9 +145,6 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                     color="primary"
                                     variant="contained"
                                     size="small"
-                                    component="a"
-                                    to="/signup"
-                                    target="_blank"
                                 >
                                     Sign up
                                 </Button>

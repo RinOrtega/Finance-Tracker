@@ -1,7 +1,5 @@
 import {React, useState} from 'react';
-import PropTypes from 'prop-types';
 import Navbar from './components/Navbar'
-import './App.css'
 import { Outlet } from 'react-router-dom';
 
 
