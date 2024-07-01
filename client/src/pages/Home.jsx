@@ -8,12 +8,13 @@ const Home = () => {
 
     return (
         <Container maxWidth="lg">
-            <Box >
+            <Box component="section" sx={{  }}>
+                
                 <Typography sx={{textAlign:'center'}}>
                     <h1 className="">Welcome!</h1>
                 </Typography>
+                <SplineRobot/>
             </Box>
-            <SplineRobot/>
         </Container>
     );
 };
