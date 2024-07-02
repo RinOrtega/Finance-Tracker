@@ -7,15 +7,17 @@ import Box from '@mui/material/Box';
 const Home = () => {
 
     return (
-        <Container maxWidth="lg">
-            <Box component="section" sx={{  }}>
+
+            <Box component="section" sx={{ p:10 }}>
                 
                 <Typography sx={{textAlign:'center'}}>
                     <h1 className="">Welcome!</h1>
                 </Typography>
+                <Box sx={{borderRadius:3, border: "5px, solid, black"}}>
                 <SplineRobot/>
+                </Box>
             </Box>
-        </Container>
+
     );
 };
 
