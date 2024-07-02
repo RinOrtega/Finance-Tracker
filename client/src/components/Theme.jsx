@@ -130,7 +130,8 @@ const getDesignTokens = (mode) => ({
         },
     },
     typography: {
-        fontFamily: ['"Poppins", "sans-serif"'].join(','),
+
+        fontFamily: ['"Poppins", "sans-serif"'].join(',')
         h1: {
             fontSize: 60,
             fontWeight: 600,
@@ -170,6 +171,7 @@ const getDesignTokens = (mode) => ({
         },
         body2: {
             fontWeight: 400,
+
             fontSize: 16,
         },
         caption: {
