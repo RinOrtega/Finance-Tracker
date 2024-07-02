@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormController from "@mui/material/FormControl"
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
@@ -50,7 +49,7 @@ const Login = () => {
     const [open, setOpen] = useState(false);
 
     // declaring the LOGIN_USER with useMutation
-    const [login, { error }] = useMutation(LOGIN_USER);
+    const [login] = useMutation(LOGIN_USER);
 
 
 
