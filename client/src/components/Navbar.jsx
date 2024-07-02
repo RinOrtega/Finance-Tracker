@@ -17,6 +17,8 @@ import ToggleColorMode from './ToggleColorMode';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 
+import Auth from '../utils/auth';
+
 const logoStyle = {
     width: '50px',
     height: 'auto',
@@ -82,135 +84,165 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                     alt="logo of FT"
                                 />
                             </Link>
-                            <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 5 }}>
-                                <Link to="/dashboard">
-                                    <MenuItem sx={{ py: '6px', px: '12px' }}  >
-                                        <Typography variant="body2" color="text.primary">
-                                            Dashboard
-                                        </Typography>
+                            {/* if user is logged in show saved books and logout */}
+                            {Auth.loggedIn() ? (
+                                <>
+                                    <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 5 }}>
+                                        <Link to="/dashboard">
+                                            <MenuItem sx={{ py: '6px', px: '12px' }}  >
+                                                <Typography variant="body2" color="text.primary">
+                                                    Dashboard
+                                                </Typography>
 
-                                    </MenuItem>
-                                </Link>
-                                <Link to="/me">
-                                    <MenuItem sx={{ py: '6px', px: '12px' }}  >
-                                        <Typography variant="body2" color="text.primary">
-                                            Profile
-                                        </Typography>
+                                            </MenuItem>
+                                        </Link>
+                                        <Link to="/me">
+                                            <MenuItem sx={{ py: '6px', px: '12px' }}  >
+                                                <Typography variant="body2" color="text.primary">
+                                                    Profile
+                                                </Typography>
 
-                                    </MenuItem>
-                                </Link>
+                                            </MenuItem>
+                                        </Link>
 
-                            </Box>
-                        </Box>
-
-                        {/* buttons on the rigt side of the navbar */}
-                        <Box
-                            sx={{
-                                display: { xs: 'none', md: 'flex' },
-                                gap: 1,
-                                alignItems: 'center'
-                            }}
-                        >
-                            {/* This is the dark mode toggle component */}
-
-                            <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-
-                            {/* These are the Login and the Sign up buttons. */}
-                            <Link to="/login">
-                                <Button
-                                    color="primary"
-                                    variant="text"
-                                    size="small"
-                                >
-                                    Login
-                                </Button>
-                            </Link>
-
-                            <Link to="/signup">
-                                <Button
-                                    color="primary"
-                                    variant="contained"
-                                    size="small"
-                                >
-                                    Sign up
-                                </Button>
-                            </Link>
-                        </Box>
-                        <Box sx={{ display: { sm: '', md: 'none' } }}>
-                            <Button
-                                variant="text"
-                                color="primary"
-                                aria-label="menu"
-                                onClick={toggleDrawer(true)}
-                                sx={{ minWidth: '30px', p: '4px' }}
-                            >
-                                <MenuIcon />
-                            </Button>
-
-                            {/* This is a drawer component that will be used in smaller screens to show the menu buttons above and the pages */}
-                            <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
-                                <Box
-                                    sx={{
-                                        minWidth: '60dvw',
-                                        p: 2,
-                                        backgroundColor: 'background.paper',
-                                        flexGrow: 1,
-                                    }}
-                                >
+                                    </Box>
                                     <Box
                                         sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'end',
-                                            flexGrow: 1,
+                                            display: { xs: 'none', md: 'flex' },
+                                            gap: 1,
+                                            alignItems: 'center'
                                         }}
                                     >
+                                        {/* This is the dark mode toggle component */}
+
                                         <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-                                    </Box>
-                                    <Link to="/dashboard">
-                                        <MenuItem  >
-                                            Dashboard
-                                        </MenuItem>
-                                    </Link>
 
-                                    <Link to="/me">
-                                        <MenuItem  >
-                                            Profile
-                                        </MenuItem>
-                                    </Link>
-
-                                    <Divider />
-                                    < Link to="/signup">
-                                        <MenuItem>
+                                        {/* These are the Login and the Sign up buttons. */}
+                                        <Link onClick={Auth.logout}>
                                             <Button
                                                 color="primary"
-                                                variant="contained"
-                                                component="a"
-                                                href="../pages/signup"
-                                                target="_blank"
-                                                sx={{ width: '100%' }}
+                                                variant="text"
+                                                size="small"
                                             >
-                                                Sign up
+                                                Logout
                                             </Button>
-                                        </MenuItem>
-                                    </Link>
-                                    <Link to="/login">
-                                        <MenuItem>
+                                        </Link>
+
+                                    </Box>
+                                </>
+                            ) : (
+                                <>
+                                    {/* buttons on the right side of the navbar */}
+                                    <Box
+                                        sx={{
+                                            display:{ xs: 'none', md: 'flex' },
+                                            gap: 1,
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        {/* This is the dark mode toggle component */}
+
+                                        <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+
+                                        {/* These are the Login and the Sign up buttons. */}
+                                        <Link to="/login">
                                             <Button
                                                 color="primary"
-                                                variant="outlined"
-                                                component="a"
-                                                href="../pages/login"
-                                                target="_blank"
-                                                sx={{ width: '100%' }}
+                                                variant="text"
+                                                size="small"
                                             >
                                                 Login
                                             </Button>
-                                        </MenuItem>
-                                    </Link>
-                                </Box>
-                            </Drawer>
+                                        </Link>
+
+                                        <Link to="/signup">
+                                            <Button
+                                                color="primary"
+                                                variant="contained"
+                                                size="small"
+                                            >
+                                                Sign up
+                                            </Button>
+                                        </Link>
+                                    </Box>
+                                </>
+                            )}
                         </Box>
+                            <Box sx={{ display: { sm: '', md: 'none' } }}>
+                                <Button
+                                    variant="text"
+                                    color="primary"
+                                    aria-label="menu"
+                                    onClick={toggleDrawer(true)}
+                                    sx={{ minWidth: '30px', p: '4px' }}
+                                >
+                                    <MenuIcon />
+                                </Button>
+
+                                {/* This is a drawer component that will be used in smaller screens to show the menu buttons above and the pages */}
+                                <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+                                    <Box
+                                        sx={{
+                                            minWidth: '60dvw',
+                                            p: 2,
+                                            backgroundColor: 'background.paper',
+                                            flexGrow: 1,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'end',
+                                                flexGrow: 1,
+                                            }}
+                                        >
+                                            <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+                                        </Box>
+                                        <Link to="/dashboard">
+                                            <MenuItem  >
+                                                Dashboard
+                                            </MenuItem>
+                                        </Link>
+
+                                        <Link to="/me">
+                                            <MenuItem  >
+                                                Profile
+                                            </MenuItem>
+                                        </Link>
+
+                                        <Divider />
+                                        < Link to="/signup">
+                                            <MenuItem>
+                                                <Button
+                                                    color="primary"
+                                                    variant="contained"
+                                                    component="a"
+                                                    href="../pages/signup"
+                                                    target="_blank"
+                                                    sx={{ width: '100%' }}
+                                                >
+                                                    Sign up
+                                                </Button>
+                                            </MenuItem>
+                                        </Link>
+                                        <Link to="/login">
+                                            <MenuItem>
+                                                <Button
+                                                    color="primary"
+                                                    variant="outlined"
+                                                    component="a"
+                                                    href="../pages/login"
+                                                    target="_blank"
+                                                    sx={{ width: '100%' }}
+                                                >
+                                                    Login
+                                                </Button>
+                                            </MenuItem>
+                                        </Link>
+                                    </Box>
+                                </Drawer>
+                            </Box>
                     </Toolbar>
                 </Container>
             </AppBar>

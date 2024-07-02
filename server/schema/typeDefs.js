@@ -41,7 +41,7 @@ type Query {
 }
 
 type Mutation {
-    addUser(fistname: String! lastname: String!, email: String!, password: String!): Auth
+    addUser(firstName: String! lastName: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
     addTransaction(input: TransactionInput!): User
     removeTransaction(transactionId: String!): User

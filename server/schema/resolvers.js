@@ -1,6 +1,7 @@
 const { User, Transaction } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
 
+
 const resolvers = {
     Query: {
         getUser: async (parent, { _id }) => {
@@ -27,8 +28,8 @@ const resolvers = {
     // fix 
     Mutation: {
         // this creates a user 
-        addUser: async (parent, { username, email, password }) => {
-            const user = await User.create({ username, email, password });
+        addUser: async (parent, { firstName, lastName, email, password }) => {
+            const user = await User.create({ firstName, lastName, email, password });
             const token = signToken(user);
 
             return { token, user };
