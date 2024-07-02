@@ -17,7 +17,7 @@ export const LOGIN_USER = gql `
 // adding a user that requires email, first & last name and password
 export const ADD_USER = gql`
     mutation addUser($firstName: String!, $lastName: String!, $email: String!, $password: String!){
-        addUser ($firstName: String!, $lastName: String!, email: $email, password: $password){
+        addUser (firstName: $firstName, lastName: $lastName, email: $email, password: $password){
             token
             user{
                 _id
@@ -27,4 +27,49 @@ export const ADD_USER = gql`
             }
         }
     } 
+`;
+
+// adds the transaction to user list
+export const SAVE_TRANSACTION = gql`
+    mutation  addTransaction($input: TransactionInput!) {
+        addTransaction(input: $input){
+            _id
+            firstName
+            lastName
+            email
+            Transactions {
+                transactionId
+                Amount
+                Description
+                Date
+                Categories{
+                    _id
+                    categoryName
+                }
+            }
+        }
+    }
+`;
+
+
+// removes the transaction from user list
+export const REMOVE_TRANSACTION = gql`
+    mutation removeTransaction($transactionId: String!) {
+        removeTransaction(transactionId: $transactionId) {
+            _id
+            firstName
+            lastName
+            email
+            Transactions {
+                transactionId
+                Amount
+                Description
+                Date
+                Categories{
+                    _id
+                    categoryName
+                }
+            }
+        }
+    }
 `;

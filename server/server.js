@@ -11,6 +11,8 @@ const db = require('./config/connection');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
+
+// new instance of apollo server which takes both parts of the schema as parameters which allows schema handle data
 const server = new ApolloServer({
   typeDefs,
   resolvers,

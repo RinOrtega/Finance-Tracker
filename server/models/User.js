@@ -1,9 +1,27 @@
 const { Schema, model } = require('mongoose');
 
-const userSchema = new Schema (
+const userSchema = new Schema(
     {
-        firstName: String,
-        lastName: String,
+        firstName: {
+            type: String,
+            required: true,
+
+        },
+        lastName: {
+            type: String,
+            required: true,
+
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            match: [/.+@.+\..+/, 'Must use a valid email address'],
+        },
+        password: {
+            type: String,
+            required: true,
+        },
         transactions: [
             {
                 type: Schema.Types.ObjectId,
@@ -23,7 +41,7 @@ const userSchema = new Schema (
 userSchema
     .virtual('fullName')
     // Getter
-    .get(function() {
+    .get(function () {
         return `${this.firstName} ${this.lastName}`;
     })
     // Setter
@@ -32,7 +50,10 @@ userSchema
         const lastName = v.split(' ')[1];
         this.set({ firstName, lastName })
     });
-    
+
+userSchema.methods.isCorrectPassword = async function (password) {
+    return bcrypt.compare(password, this.password);
+};
 // Initialize User Model
 const User = model('user', userSchema);
 

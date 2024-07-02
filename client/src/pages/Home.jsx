@@ -10,10 +10,10 @@ const Home = () => {
 
             <Box component="section" sx={{ p:10 }}>
                 
-                <Typography sx={{textAlign:'center'}}>
+                <Typography sx={{textAlign:'center', pointerEvents:'none'}}>
                     <h1 className="">Welcome!</h1>
                 </Typography>
-                <Box sx={{borderRadius:3, border: "5px, solid, black"}}>
+                <Box sx={{borderRadius:3, border: "5px, solid, black" }}>
                 <SplineRobot/>
                 </Box>
             </Box>

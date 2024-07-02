@@ -2,8 +2,11 @@ import {useState} from 'react';
 import Navbar from './components/Navbar'
 import { Outlet } from 'react-router-dom';
 
-import PropTypes from 'prop-types';
 
+
+
+// MUI components
+import PropTypes from 'prop-types';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -12,6 +15,47 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import getLPTheme from './components/Theme';
+
+
+// importing Apollo provider
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+
+// Construct our main GraphQL API endpoint
+const httpLink = createHttpLink({
+  uri: '/graphql',
+});
+
+// Construct request middleware that will attach the JWT token to every request as an `authorization` header
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('id_token');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+// Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
+
+
+
+
+
+
+
 
 // toggle button
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
@@ -75,7 +119,7 @@ function App()
 
 
   return (
-    <>
+    <ApolloProvider client = {client}>
 <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
       <CssBaseline />
       <Navbar mode={mode} toggleColorMode={toggleColorMode} />
@@ -87,7 +131,7 @@ function App()
         toggleCustomTheme={toggleCustomTheme}
       />
     </ThemeProvider>
-    </>
+    </ApolloProvider>
   )
 }
 
