@@ -65,7 +65,7 @@ const getDesignTokens = (mode) => ({
                 contrastText: brand[100],
                 light: brand[300],
                 main: brand[400],
-                dark: brand[800],
+                dark: brand[900],
             }),
         },
         secondary: {
