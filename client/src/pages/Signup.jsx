@@ -92,7 +92,7 @@ const SignUp = () => {
             {/* box with title and icon */}
             <Box
                 sx={{
-                    marginTop: 8,
+                    marginTop: 15,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
