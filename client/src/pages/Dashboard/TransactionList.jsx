@@ -49,7 +49,7 @@ function getComparator(order, orderBy) {
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
-
+// this function sorts the table
 function stableSort(array, comparator) {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
@@ -188,7 +188,9 @@ function EnhancedTableToolbar(props) {
                 </Typography>
             )}
             {numSelected > 0 ? (
+
                 // the delete button icon
+                // remove transaction
                 <Tooltip title="Delete">
                     <IconButton>
                         <DeleteIcon />
@@ -306,7 +308,7 @@ export default function TransactionTable() {
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
-                                    // This are the table rows with the checkboes
+                                    // This are the table rows with the checkboxes
                                     <TableRow
                                         hover
                                         onClick={(event) => handleClick(event, row.id)}
@@ -326,6 +328,7 @@ export default function TransactionTable() {
                                                 }}
                                             />
                                         </TableCell>
+                                        {/* This is where the data from the top or the database can be passed to be rendered */}
                                         <TableCell
                                             component="th"
                                             id={labelId}
