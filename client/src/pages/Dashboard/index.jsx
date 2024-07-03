@@ -5,13 +5,12 @@ import { Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/Menu";
-import PropTypes from 'prop-types';
-import Button from "@mui/material/Button"
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
+import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
 
 
@@ -19,52 +18,49 @@ import Box from '@mui/material/Box';
 
 const Tracker = () => {
 
-
+    // these are the use states for the input boxes
     const [description, setDescription] = useState('')
     const [amount, setAmount] = useState('')
     const [category, setCategory] = useState('');
     const [payment, setPayment] = useState('')
 
-
+    // this are the select box handle changes for category and paymentmwthod
     const CategoryHandleChange = (event) => {
-        // setCategory(event.target.value);
+        setCategory(event.target.value);
     };
 
 
     const PaymentHandleChange = (event) => {
-        // setPayment(event.target.value);
+        setPayment(event.target.value);
     };
 
+
+    // the is handleSubmit is for the add button at the end of the page.
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        const newTransaction = {
-            // userId:
-            // date:
-            // description:
-            //amount: parseFloat(amount)
-            //category:
-            //paymentMethod:
-        };
-
-    //addTransaction(newTransaction);
         setDescription("");
         setAmount("");
         setCategory("");
         setPayment("");
     };
 
-    return (
-        <Container sx={{ border: '1px dashed grey' }}>
 
-            <Box component="main" sx={{ p: 2, border: '1px solid grey' }}>
+ // this is the react and material ui components that are rendered
+    return (
+        <Container maxWidth="md" sx={{ mt:10, border: '1px dashed grey' }}>
+
+            <Box component="main" sx={{p: 2, border: '1px solid grey' }}>
 
                 {/* The Budget total  */}
                 <Box component="div" sx={{ textAlign: 'center', m: 2 }}>
                     <Typography variant="h4">
-                        Hello, "user" this is your current budget:
+                        Hello, user.firstname this is your current budget:
 
                     </Typography>
+
+                    
+                    {/* This is the total budget */}
                     <Typography
                         variant="h3"
                         fontFamily="monospace"
@@ -74,26 +70,30 @@ const Tracker = () => {
                     </Typography>
 
                 </Box>
+
+
                 {/* All the transaction form input */}
                 <Box component="form" onSubmit={handleSubmit} sx={{ textAlign: "center" }}>
-                    <div>
-                        <div>
-                            {/* Description box */}
-                            <TextField id="outlined-basic" label="Description" variant="outlined"
-                            
-                            sx={{ width: 300, m: 2 }} />
+                    <Box component="div">
+                        <Box component="div">
+                            {/* Description input box */}
+                            <TextField id="outlined-basic" label="Description" value={description} variant="outlined"
 
-                            {/* Amount box */}
+                                sx={{ width: 300, m: 2 }} />
+
+                            {/* Amount inputbox */}
                             <FormControl fullWidth sx={{ width: 300, m: 2 }}>
                                 <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
                                 <OutlinedInput
                                     id="outlined-adornment-amount"
                                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                     label="Amount"
+                                    value={amount}
                                 />
                             </FormControl>
 
-                        </div>
+                        </Box>
+                        {/* Select drop down Category */}
                         <FormControl sx={{ width: 300, m: 2 }}>
                             <InputLabel id="category-label">Category</InputLabel>
                             <Select
@@ -113,6 +113,8 @@ const Tracker = () => {
                             </Select>
                         </FormControl>
 
+                        {/* Payment Method dropdown*/}
+
                         <FormControl sx={{ width: 300, m: 2 }} >
                             <InputLabel id="payment-label">Payment Method</InputLabel>
                             <Select
@@ -120,19 +122,23 @@ const Tracker = () => {
                                 id="payment-select"
                                 value={payment}
                                 label="Payment"
-                                onChange={(e) => setPayment(e.target.value)}>
+                                onChange={PaymentHandleChange}>
+
                                 <MenuItem >Credit card</MenuItem>
                                 <MenuItem >Cash</MenuItem>
                                 <MenuItem >Bank transfer</MenuItem>
 
                             </Select>
                         </FormControl>
-                        <div>
+
+                        {/* Add button to add transactions */}
+                        <Box component="div">
                             <Button type="submit" variant="contained">
                                 ADD
                             </Button>
-                        </div>
-                    </div>
+                        </Box>
+
+                    </Box>
                 </Box>
 
                 {/* This is the table with all the transaction values */}
