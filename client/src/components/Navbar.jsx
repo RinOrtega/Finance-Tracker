@@ -84,9 +84,11 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                     alt="logo of FT"
                                 />
                             </Link>
+
                             {/* if user is logged in show saved books and logout */}
                             {Auth.loggedIn() ? (
                                 <>
+                                
                                     <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 5 }}>
                                         <Link to="/dashboard">
                                             <MenuItem sx={{ py: '6px', px: '12px' }}  >
@@ -135,9 +137,10 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                     {/* buttons on the right side of the navbar */}
                                     <Box
                                         sx={{
-                                            display:{ xs: 'none', md: 'flex' },
+                                            display: { xs: 'none', md: 'flex' },
                                             gap: 1,
                                             alignItems: 'center',
+                                            ml:10
                                         }}
                                     >
                                         {/* This is the dark mode toggle component */}
@@ -168,18 +171,22 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                 </>
                             )}
                         </Box>
-                            <Box sx={{ display: { sm: '', md: 'none' } }}>
-                                <Button
-                                    variant="text"
-                                    color="primary"
-                                    aria-label="menu"
-                                    onClick={toggleDrawer(true)}
-                                    sx={{ minWidth: '30px', p: '4px' }}
-                                >
-                                    <MenuIcon />
-                                </Button>
 
-                                {/* This is a drawer component that will be used in smaller screens to show the menu buttons above and the pages */}
+
+                        <Box sx={{ display: { sm: '', md: 'none' } }}>
+                            <Button
+                                variant="text"
+                                color="primary"
+                                aria-label="menu"
+                                onClick={toggleDrawer(true)}
+                                sx={{ minWidth: '30px', p: '4px' }}
+                            >
+                                <MenuIcon />
+                            </Button>
+
+                            {/* This is a drawer component that will be used in smaller screens to show the menu buttons above and the pages */}
+
+                            {Auth.loggedIn() ? (
                                 <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
                                     <Box
                                         sx={{
@@ -212,6 +219,42 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                         </Link>
 
                                         <Divider />
+                                            <MenuItem>
+                                                <Button
+                                                    onClick={Auth.logout}
+                                                    color="primary"
+                                                    variant="contained"
+                                                    component="a"
+                                                    target="_blank"
+                                                    sx={{ width: '100%' }}
+                                                >
+                                                    Log out
+                                                </Button>
+                                            </MenuItem>
+
+                                    </Box>
+                                </Drawer>
+                            ) : (
+                                <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+                                    <Box
+                                        sx={{
+                                            minWidth: '60dvw',
+                                            p: 2,
+                                            backgroundColor: 'background.paper',
+                                            flexGrow: 1,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'end',
+                                                flexGrow: 1,
+                                            }}
+                                        >
+                                            <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+                                        </Box>
+                                        <Divider />
                                         < Link to="/signup">
                                             <MenuItem>
                                                 <Button
@@ -242,7 +285,8 @@ const Navbar = ({ mode, toggleColorMode }) => {
                                         </Link>
                                     </Box>
                                 </Drawer>
-                            </Box>
+                            )}
+                        </Box>
                     </Toolbar>
                 </Container>
             </AppBar>

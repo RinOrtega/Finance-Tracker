@@ -103,7 +103,7 @@ const Login = () => {
             {/* This is the box that includes the title of the login box */}
             <Box
                 sx={{
-                    marginTop: 8,
+                    marginTop: 15,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',

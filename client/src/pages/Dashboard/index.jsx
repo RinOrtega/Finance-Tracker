@@ -2,7 +2,6 @@ import { useState } from "react";
 import TransactionList from "./TransactionList"
 import Container from "@mui/material/Container";
 import { Typography } from "@mui/material";
-import TextField from "@mui/material/TextField";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
@@ -48,7 +47,7 @@ const Tracker = () => {
 
  // this is the react and material ui components that are rendered
     return (
-        <Container maxWidth="md" sx={{ mt:10, border: '1px dashed grey' }}>
+        <Container maxWidth="md" sx={{ mt:15, textAlign:"center"}}>
 
             <Box component="main" sx={{p: 2, border: '1px solid grey' }}>
 
@@ -76,16 +75,22 @@ const Tracker = () => {
                 <Box component="form" onSubmit={handleSubmit} sx={{ textAlign: "center" }}>
                     <Box component="div">
                         <Box component="div">
+
+
+                        <FormControl fullWidth sx={{ width: 300, m: 2 }}>
+                                <InputLabel>Description</InputLabel>
+                                <OutlinedInput
+                                    id="description" 
+                                    label="Description" 
+                                    value={description} variant="filled"
+                                />
+                            </FormControl>
                             {/* Description input box */}
-                            <TextField id="outlined-basic" label="Description" value={description} variant="outlined"
-
-                                sx={{ width: 300, m: 2 }} />
-
                             {/* Amount inputbox */}
                             <FormControl fullWidth sx={{ width: 300, m: 2 }}>
-                                <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+                                <InputLabel>Amount</InputLabel>
                                 <OutlinedInput
-                                    id="outlined-adornment-amount"
+                                    id="amount"
                                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                     label="Amount"
                                     value={amount}
@@ -132,7 +137,7 @@ const Tracker = () => {
                         </FormControl>
 
                         {/* Add button to add transactions */}
-                        <Box component="div">
+                        <Box component="div" sx={{mb:2}}>
                             <Button type="submit" variant="contained">
                                 ADD
                             </Button>
