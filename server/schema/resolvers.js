@@ -58,7 +58,7 @@ const resolvers = {
         addTransaction: async (parent, { Amount, Description, Date, Category, input}, context) => {
             if (context.user) {
                 const transaction = await Transaction.create({
-                    Amount, Description, Date,
+                    Amount, Description, Date, Category,
                     transactionUser: context.user
                 });
 

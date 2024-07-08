@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TransactionList from "./TransactionList"
 import Container from "@mui/material/Container";
 import { Typography } from "@mui/material";
@@ -12,25 +12,39 @@ import Select from '@mui/material/Select';
 import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
 
+// importing the auth and localStorage
+import Auth from "../../utils/auth";
+import { TransactionsIds, getTransactionsIds } from "../../utils/localStorage";
+
+// importing Apollo hook and mutation
+import { ADD_TRANSACTION } from "../../utils/mutations";
+import { useMutation } from "@apollo/client";
 
 
+const Dashboard = () => {
 
-const Tracker = () => {
+    // create state to hold saved transaction id values
 
-    // these are the use states for the input boxes
-    const [description, setDescription] = useState('')
-    const [amount, setAmount] = useState('')
-    const [category, setCategory] = useState('');
-    const [payment, setPayment] = useState('')
+    const [TransactionsIds, setTransactionsIds] = useState(getTransactionsIds());
 
-    // this are the select box handle changes for category and paymentmwthod
-    const CategoryHandleChange = (event) => {
-        setCategory(event.target.value);
-    };
+    // set up useEffect hook to save `TransactionIds` list to localStorage on component unmount
+
+    // useEffect(() => {
+    //     return () => TransactionsIds(TransactionsIds);
+    // });
+
+    //setting up the ADD_TRANSACTION Mutation
+
+    const [addTransaction] = useMutation(ADD_TRANSACTION)
+
+ // this is th value of the forms
+    const [transactionFormData , setTransactionFormData] = useState ({description:'',amount:'',category:'',date:'' })
 
 
-    const PaymentHandleChange = (event) => {
-        setPayment(event.target.value);
+    // handles the input change 
+    const handleInputChange = (event) => {
+        const {Transactions, value} = event.target;
+        setTransactionFormData({...transactionFormData, [Transactions]: value});
     };
 
 
@@ -38,18 +52,20 @@ const Tracker = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        setDescription("");
-        setAmount("");
-        setCategory("");
-        setPayment("");
+        setTransactionFormData({
+        description:'',
+        amount:'',
+        category:'',
+        date:'' 
+        })
     };
 
 
- // this is the react and material ui components that are rendered
+    // this is the react and material ui components that are rendered
     return (
-        <Container maxWidth="md" sx={{ mt:15, textAlign:"center"}}>
+        <Container maxWidth="md" sx={{ mt: 15, textAlign: "center" }}>
 
-            <Box component="main" sx={{p: 2, border: '1px solid grey' }}>
+            <Box component="main" sx={{ p: 2, border: '1px solid grey' }}>
 
                 {/* The Budget total  */}
                 <Box component="div" sx={{ textAlign: 'center', m: 2 }}>
@@ -58,7 +74,7 @@ const Tracker = () => {
 
                     </Typography>
 
-                    
+
                     {/* This is the total budget */}
                     <Typography
                         variant="h3"
@@ -77,12 +93,14 @@ const Tracker = () => {
                         <Box component="div">
 
 
-                        <FormControl fullWidth sx={{ width: 300, m: 2 }}>
+                            <FormControl fullWidth sx={{ width: 300, m: 2 }}>
                                 <InputLabel>Description</InputLabel>
                                 <OutlinedInput
-                                    id="description" 
-                                    label="Description" 
-                                    value={description} variant="filled"
+                                    id="description"
+                                    label="Description"
+                                    value={transactionFormData.description} 
+                                    variant="filled"
+                                    onChange={handleInputChange}
                                 />
                             </FormControl>
                             {/* Description input box */}
@@ -93,7 +111,8 @@ const Tracker = () => {
                                     id="amount"
                                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                     label="Amount"
-                                    value={amount}
+                                    value={transactionFormData.amount}
+                                    onChange={handleInputChange}
                                 />
                             </FormControl>
 
@@ -104,9 +123,9 @@ const Tracker = () => {
                             <Select
                                 labelId="category-label"
                                 id="category-select"
-                                value={category}
+                                value={transactionFormData.category}
                                 label="Category"
-                                onClick={CategoryHandleChange}
+                                onChange={handleInputChange}
                             >
                                 <MenuItem >Food</MenuItem>
                                 <MenuItem >Rent</MenuItem>
@@ -121,13 +140,13 @@ const Tracker = () => {
                         {/* Payment Method dropdown*/}
 
                         <FormControl sx={{ width: 300, m: 2 }} >
-                            <InputLabel id="payment-label">Payment Method</InputLabel>
+                            <InputLabel id="payment-label">Date</InputLabel>
                             <Select
                                 labelId="payment-label"
                                 id="payment-select"
-                                value={payment}
+                                value={transactionFormData.date}
                                 label="Payment"
-                                onChange={PaymentHandleChange}>
+                                onChange={handleInputChange}>
 
                                 <MenuItem >Credit card</MenuItem>
                                 <MenuItem >Cash</MenuItem>
@@ -137,7 +156,7 @@ const Tracker = () => {
                         </FormControl>
 
                         {/* Add button to add transactions */}
-                        <Box component="div" sx={{mb:2}}>
+                        <Box component="div" sx={{ mb: 2 }}>
                             <Button type="submit" variant="contained">
                                 ADD
                             </Button>
@@ -154,4 +173,4 @@ const Tracker = () => {
     );
 };
 
-export default Tracker;
+export default Dashboard;
