@@ -1,4 +1,4 @@
-export const getTrasactionsIds = () => {
+export const getTransactionsIds = () => {
     const TrasactionsIds = localStorage.getItem('Transactions')
         ? JSON.parse(localStorage.getItem('Transactions'))
         : [];
@@ -6,7 +6,7 @@ export const getTrasactionsIds = () => {
     return TrasactionsIds;
 };
 
-export const TrasactionsIds = (trasactionIdArr) => {
+export const TransactionsIds = (trasactionIdArr) => {
     if (trasactionIdArr.length) {
         localStorage.setItem('Transactions', JSON.stringify(trasactionIdArr));
     } else {

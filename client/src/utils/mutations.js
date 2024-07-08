@@ -30,7 +30,7 @@ export const ADD_USER = gql`
 `;
 
 // adds the transaction to user list
-export const SAVE_TRANSACTION = gql`
+export const ADD_TRANSACTION = gql`
     mutation  addTransaction($input: TransactionInput!) {
         addTransaction(input: $input){
             _id
