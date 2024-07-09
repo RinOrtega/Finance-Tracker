@@ -64,7 +64,7 @@ const resolvers = {
 
                 await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { transactions: input } },
+                    { $addToSet: { Transactions: input } },
                     { new: true, runValidators: true }
                 );
 
@@ -74,7 +74,7 @@ const resolvers = {
         },
 
         // this removes the transaction  from the user when delete button is pressed
-        removeTransaction: async (parent, { transactionId }, context) => {
+        removeTransaction: async (parent, { _id }, context) => {
             if (context.user) {
                 const transaction = await Transaction.findOneAndDelete(
                     {
@@ -84,7 +84,7 @@ const resolvers = {
 
                 await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $pull: { transactions: { transactionId: transactionId }} },
+                    { $pull: { Transactions: { _id: _id }} },
                     {new: true }
                 );
 

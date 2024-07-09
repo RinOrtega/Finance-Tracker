@@ -38,7 +38,6 @@ export const ADD_TRANSACTION = gql`
             lastName
             email
             Transactions {
-                transactionId
                 Amount
                 Description
                 Date
@@ -54,14 +53,14 @@ export const ADD_TRANSACTION = gql`
 
 // removes the transaction from user list
 export const REMOVE_TRANSACTION = gql`
-    mutation removeTransaction($transactionId: String!) {
-        removeTransaction(transactionId: $transactionId) {
+    mutation removeTransaction($_id: ID!) {
+        removeTransaction(_id: $_id) {
             _id
             firstName
             lastName
             email
             Transactions {
-                transactionId
+                _id
                 Amount
                 Description
                 Date
