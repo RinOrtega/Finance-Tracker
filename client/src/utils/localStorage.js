@@ -1,4 +1,4 @@
-export const getTransactionsIds = () => {
+export const getTransactionIds = () => {
     const TrasactionsIds = localStorage.getItem('Transactions')
         ? JSON.parse(localStorage.getItem('Transactions'))
         : [];
@@ -6,15 +6,15 @@ export const getTransactionsIds = () => {
     return TrasactionsIds;
 };
 
-export const TransactionsIds = (trasactionIdArr) => {
-    if (trasactionIdArr.length) {
-        localStorage.setItem('Transactions', JSON.stringify(trasactionIdArr));
+export const saveTransactionIds = (Transaction_idArr) => {
+    if (Transaction_idArr.length) {
+        localStorage.setItem('Transactions', JSON.stringify(Transaction_idArr));
     } else {
         localStorage.removeItem('Transactions');
     }
 };
 
-export const removeTransactionId = (trasactionId) => {
+export const removeTransactionId = (Transaction_id) => {
     const TransactionsIds = localStorage.getItem('Transactions')
         ? JSON.parse(localStorage.getItem('Transactions'))
         : null;
@@ -23,7 +23,7 @@ export const removeTransactionId = (trasactionId) => {
         return false;
     }
 
-    const updatedTransactionsIds = TransactionsIds?.filter((TrasactionsId) => TrasactionsId !== trasactionId);
+    const updatedTransactionsIds = TransactionsIds?.filter((TrasactionsId) => TrasactionsId !== Transaction_id);
     localStorage.setItem('Transactions', JSON.stringify(updatedTransactionsIds));
 
     return true;

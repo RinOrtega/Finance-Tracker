@@ -9,7 +9,6 @@ type User {
 
 type Transaction {
     _id: ID!
-    transactionId: String!
     Amount: Float!
     Description: String!
     Date: String!
@@ -22,7 +21,6 @@ type Category {
 }
 
 input TransactionInput {
-    transactionId: String!
     Amount: Float!
     Description: String!
     Date: String!
@@ -44,7 +42,7 @@ type Mutation {
     addUser(firstName: String! lastName: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
     addTransaction(input: TransactionInput!): User
-    removeTransaction(transactionId: String!): User
+    removeTransaction(_id: ID!): User
 }
 `;
 
