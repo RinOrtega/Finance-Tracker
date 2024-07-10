@@ -37,7 +37,7 @@ export const ADD_TRANSACTION = gql`
             firstName
             lastName
             email
-            Transactions {
+            transactions {
                 Amount
                 Description
                 Date
@@ -59,7 +59,7 @@ export const REMOVE_TRANSACTION = gql`
             firstName
             lastName
             email
-            Transactions {
+            transactions {
                 _id
                 Amount
                 Description

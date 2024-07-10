@@ -26,7 +26,7 @@ const userSchema = new Schema(
         transactions: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'Transactions',
+                ref: "Transaction",
             },
         ],
     },

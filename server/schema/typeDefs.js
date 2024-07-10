@@ -4,7 +4,7 @@ type User {
     firstName: String!
     lastName: String!
     email: String!
-    Transactions: [Transaction]
+    transactions: [Transaction]
 }
 
 type Transaction {

@@ -38,15 +38,15 @@ const resolvers = {
         // this is for when user logs in
         login: async (parent, { email, password }) => {
             const user = await User.findOne({ email });
-            console.log("user",user);
+            console.log("user", user);
             if (!user) {
-                throw  new AuthenticationError("Incorrect email");
+                throw new AuthenticationError("Incorrect email");
             }
 
 
             const correctPw = await user.isCorrectPassword(password);
 
-            console.log("correctpw",correctPw)
+            console.log("correctpw", correctPw)
             if (!correctPw) {
                 throw new AuthenticationError("Incorrect Password");
             }
@@ -55,48 +55,51 @@ const resolvers = {
             return { token, user };
         },
         //  this creates a transaction
-        addTransaction: async (parent, { Amount, Description, Date, Category, input}, context) => {
-            if (context.user) {
-                const transaction = await Transaction.create({
-                    Amount, Description, Date, Category,
-                    Transactions: context.user
-                });
+        addTransaction: async (parent, { input }, context) => {
+            // destructing the input from the client side
+            const { Amount, Description, Date, Categories } = input; 
 
-                const addedTransaction = await User.findOneAndUpdate(
-                    { _id: context.user._id },
-                    { $addToSet: { Transactions: input } },
-                    { new: true, runValidators: true }
-                );
-                
-                console.log("transaction", transaction)
-                console.log("addedTransaction",addedTransaction)
-                return transaction, addedTransaction;
+                if (context.user) {
 
-                
-            }
-            throw AuthenticationError;
-        },
-
-        // this removes the transaction  from the user when delete button is pressed
-        removeTransaction: async (parent, { _id }, context) => {
-            if (context.user) {
-                const transaction = await Transaction.findOneAndDelete(
-                    {
-                        _id: transactionId,
-                        transactionUser: context.user
+                    // this creates a new transaction
+                    const transaction = await Transaction.create({
+                        Amount, Description, Date, Categories,
                     });
 
-                await User.findOneAndUpdate(
-                    { _id: context.user._id },
-                    { $pull: { Transactions: { _id: _id }} },
-                    {new: true }
-                );
+                    const updatedUser = await User.findOneAndUpdate(
+                        { _id: context.user._id },
+                        { $push: { transactions: transaction._id } },
+                        { new: true, runValidators: true }
+                    ).populate('transactions'); // Populate the transactions array
 
-                return transaction;
-            }
-            throw AuthenticationError;
-        },
+
+                    return updatedUser;
+
+
+                }
+                throw AuthenticationError;
+            },
+
+                // this removes the transaction  from the user when delete button is pressed
+                removeTransaction: async (parent, { _id }, context) => {
+                    if (context.user) {
+                        const transaction = await Transaction.findOneAndDelete(
+                            {
+                                _id: transactionId,
+                                transactionUser: context.user
+                            });
+
+                        await User.findOneAndUpdate(
+                            { _id: context.user._id },
+                            { $pull: { transactions: { _id: _id } } },
+                            { new: true }
+                        );
+
+                        return transaction;
+                    }
+                    throw AuthenticationError;
+                },
     }
-};
+    };
 
-module.exports = resolvers;
+    module.exports = resolvers;
