@@ -61,7 +61,14 @@ const Dashboard = () => {
     // the is handleSubmit is for the add button at the end of the page.
     const handleAddTransaction = async (event) => {
         event.preventDefault();
-        
+
+
+        const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+        if (!token) {
+            return false;
+        }
+
         // getting the inputs and seperating them so that we can parse float the amount
 
         const Amount = parseFloat(parseFloat(transactionFormData.Amount).toFixed(2));
@@ -75,21 +82,20 @@ const Dashboard = () => {
 
 
         try {
-            console.log(Amount, Description, Categories, Date);
+            console.log("Input variables:", { Description, Amount, Categories, Date });
             const response = await addTransaction({
                 variables: { input: { Description, Amount, Categories, Date } }
             });
-            console.log("hello")
 
-            console.log("response", response);
+            console.log("Raw response:", response);
 
             if (!response.data) {
                 throw new Error('something went wrong!');
             }
 
-
+            console.log("Transaction added successfully:", response.data);
         } catch (err) {
-            console.error(err);
+            console.error("Error adding transaction:", err);
         }
 
 
@@ -99,31 +105,6 @@ const Dashboard = () => {
             Categories: '',
             Date: ''
         })
-    };
-
-
-    // create function to handle saving a book to our database
-    const handleSaveTransaction = async (bookId) => {
-        // find the transaction  in `savedTransaction` state by the matching id
-        // const transactionToSave = searchedBooks.find((book) => book.bookId === bookId);
-
-        // get token
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-        if (!token) {
-            return false;
-        }
-
-        try {
-            const { data } = await saveTransaction({
-                variables: { input: { ...bookToSave } },
-            });
-
-            // if transaction successfully saves to user's account, save transaction id to state
-            setSaveTransactionIds([...saveTransactionIds, bookToSave.bookId]);
-        } catch (err) {
-            console.error(err);
-        }
     };
 
 

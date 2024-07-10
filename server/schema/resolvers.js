@@ -59,16 +59,20 @@ const resolvers = {
             if (context.user) {
                 const transaction = await Transaction.create({
                     Amount, Description, Date, Category,
-                    transactionUser: context.user
+                    Transactions: context.user
                 });
 
-                await User.findOneAndUpdate(
+                const addedTransaction = await User.findOneAndUpdate(
                     { _id: context.user._id },
                     { $addToSet: { Transactions: input } },
                     { new: true, runValidators: true }
                 );
+                
+                console.log("transaction", transaction)
+                console.log("addedTransaction",addedTransaction)
+                return transaction, addedTransaction;
 
-                return transaction;
+                
             }
             throw AuthenticationError;
         },
