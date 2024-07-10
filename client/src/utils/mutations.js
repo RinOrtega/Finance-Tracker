@@ -43,7 +43,7 @@ export const ADD_TRANSACTION = gql`
                 Date
                 Categories{
                     _id
-                    categoryName
+                    categoryType
                 }
             }
         }
@@ -66,7 +66,7 @@ export const REMOVE_TRANSACTION = gql`
                 Date
                 Categories{
                     _id
-                    categoryName
+                    categoryType
                 }
             }
         }

@@ -1,4 +1,5 @@
 const { User, Transaction } = require('../models');
+const Category = require('../models/Category');
 const { signToken, AuthenticationError } = require('../utils/auth');
 
 
@@ -19,6 +20,7 @@ const resolvers = {
                 const userData = await User.findOne({ _id: context.user._id }).select(
                     "-__v -password"
                 );
+                
                 return userData;
             }
             throw AuthenticationError;
@@ -46,7 +48,6 @@ const resolvers = {
 
             const correctPw = await user.isCorrectPassword(password);
 
-            console.log("correctpw", correctPw)
             if (!correctPw) {
                 throw new AuthenticationError("Incorrect Password");
             }
@@ -59,21 +60,31 @@ const resolvers = {
             // destructing the input from the client side
             const { Amount, Description, Date, Categories } = input; 
 
-                if (context.user) {
+            
 
+                if (context.user) {
+                    
                     // this creates a new transaction
                     const transaction = await Transaction.create({
-                        Amount, Description, Date, Categories,
+                        Amount, Description, Date, Categories
                     });
+
+                    // // this creates a new category
+                    // const category = await Category.create({
+                    //     Categories
+                    // })
 
                     const updatedUser = await User.findOneAndUpdate(
                         { _id: context.user._id },
-                        { $push: { transactions: transaction._id } },
+                        { $push: { transactions: transaction._id }},
                         { new: true, runValidators: true }
                     ).populate('transactions'); // Populate the transactions array
 
 
                     return updatedUser;
+
+
+                    
 
 
                 }
@@ -85,7 +96,7 @@ const resolvers = {
                     if (context.user) {
                         const transaction = await Transaction.findOneAndDelete(
                             {
-                                _id: transactionId,
+                                _id: transaction._id,
                                 transactionUser: context.user
                             });
 

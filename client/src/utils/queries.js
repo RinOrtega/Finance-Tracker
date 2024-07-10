@@ -7,14 +7,14 @@ export const GET_ME = gql`
             firstName
             lastName
             email
-            transactions {
+            transactions{
                 _id
                 Amount
                 Description
                 Date
                 Categories{
                     _id
-                    categoryName   
+                    categoryType   
                 }
             }
         }

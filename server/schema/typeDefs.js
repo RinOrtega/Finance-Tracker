@@ -13,11 +13,11 @@ type Transaction {
     Description: String!
     Date: String!
     Categories: [Category]
-}
+}  
 
 type Category {
     _id: ID!
-    categoryName: String!
+    categoryType: String!
 }
 
 input TransactionInput {

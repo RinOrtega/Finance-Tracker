@@ -30,6 +30,8 @@ const Dashboard = () => {
     const { data } = useQuery(GET_ME);
     let userData = data?.me || {};
 
+    console.log("userdashboard", userData)
+
 
     // create state to hold saved transaction id values
 
@@ -82,12 +84,11 @@ const Dashboard = () => {
 
 
         try {
-            console.log("Input variables:", { Description, Amount, Categories, Date });
+            
             const response = await addTransaction({
                 variables: { input: { Description, Amount, Categories, Date } }
             });
 
-            console.log("Raw response:", response);
 
             if (!response.data) {
                 throw new Error('something went wrong!');
