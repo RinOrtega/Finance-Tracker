@@ -1,0 +1,20 @@
+[
+    {
+        "categoryName": "Food"
+    },
+    {
+        "categoryName": "Rent"
+    },
+    {
+        "categoryName": "Income"
+    },
+    {
+        "categoryName": "Utilities"
+    },
+    {
+        "categoryName": "Entertainment"
+    },
+    {
+        "categoryName": "Other"
+    }
+]
