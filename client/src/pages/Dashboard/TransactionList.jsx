@@ -30,14 +30,14 @@ import { GET_ME } from "../../utils/queries";
 import { REMOVE_TRANSACTION } from "../../utils/mutations";
 
 // the data that comes from the user input or database
-function createData(id, description, amount, category, paymentMethod, date) {
-    return { id, description, amount, category, paymentMethod, date };
+function createData(id, description, amount, category, date) {
+    return { id, description, amount, category,date };
 }
 
 // rows in the table with input from user or database
 const rows = [
-    createData(1, 'TV', 250, "Entertainment", "Credit Card", "4-25-2024"),
-    createData(2, 'Salary', 1500, "Salary", "Bank Transfer", "3-31-2024"),
+    createData(1, 'TV', 250, "Entertainment","4-25-2024"),
+    createData(2, 'Salary', 1500, "Salary", "3-31-2024"),
 ];
 
 // this is next two functions help organize the table
@@ -88,12 +88,6 @@ const headCells = [
         numeric: true,
         disablePadding: false,
         label: 'Category',
-    },
-    {
-        id: 'paymentMethod',
-        numeric: true,
-        disablePadding: false,
-        label: 'Payment Method',
     },
     {
         id: 'date',
@@ -261,7 +255,6 @@ export default function TransactionTable() {
 
 
 
-
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('transactions');
     const [selected, setSelected] = useState([]);
@@ -386,13 +379,12 @@ export default function TransactionTable() {
                                             component="th"
                                             id={labelId}
                                             scope="row"
-                                            padding="none"
-                                        >
+                                            padding="none">
+                                        {/* userData.transactions.description */}
                                             {row.description}
                                         </TableCell>
                                         <TableCell align="right">{row.amount}</TableCell>
                                         <TableCell align="right">{row.category}</TableCell>
-                                        <TableCell align="right">{row.paymentMethod}</TableCell>
                                         <TableCell align="right">{row.date}</TableCell>
                                     </TableRow>
                                 );

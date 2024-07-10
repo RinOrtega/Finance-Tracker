@@ -4,7 +4,7 @@ type User {
     firstName: String!
     lastName: String!
     email: String!
-    Transactions: [Transaction]
+    transactions: [Transaction]
 }
 
 type Transaction {
@@ -13,11 +13,11 @@ type Transaction {
     Description: String!
     Date: String!
     Categories: [Category]
-}
+}  
 
 type Category {
     _id: ID!
-    categoryName: String!
+    categoryType: String!
 }
 
 input TransactionInput {
