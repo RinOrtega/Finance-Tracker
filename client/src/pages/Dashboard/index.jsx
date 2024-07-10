@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import TransactionList from "./TransactionList"
 import Container from "@mui/material/Container";
-import {Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
@@ -45,8 +45,10 @@ const Dashboard = () => {
 
     const [addTransaction] = useMutation(ADD_TRANSACTION)
 
-    // this is th value of the forms
-    const [transactionFormData, setTransactionFormData] = useState({ Description: '', Amount:'', Categories: '', Date:'' })
+
+    // this is the input value of the forms
+    const [transactionFormData, setTransactionFormData] = useState(
+        { Description: '', Amount: '', Categories: '', Date: '' })
 
 
     // handles the input change 
@@ -60,21 +62,32 @@ const Dashboard = () => {
     const handleAddTransaction = async (event) => {
         event.preventDefault();
         
-        try {
-            const response = await addTransaction({
-                variables: { input: { ...transactionFormData} }
-            });
+        // getting the inputs and seperating them so that we can parse float the amount
 
-        
+        const Amount = parseFloat(parseFloat(transactionFormData.Amount).toFixed(2));
+        const Description = transactionFormData.Description;
+        const Categories = transactionFormData.Categories;
+        const Date = transactionFormData.Date;
+
+        if (!handleInputChange) {
+            return false;
+        }
+
+
+        try {
+            console.log(Amount, Description, Categories, Date);
+            const response = await addTransaction({
+                variables: { input: { Description, Amount, Categories, Date } }
+            });
+            console.log("hello")
+
             console.log("response", response);
 
             if (!response.data) {
                 throw new Error('something went wrong!');
             }
 
-            const { token, user } = await response.data;
-            console.log(user);
-            Auth.login(token);
+
         } catch (err) {
             console.error(err);
         }
@@ -87,6 +100,33 @@ const Dashboard = () => {
             Date: ''
         })
     };
+
+
+    // create function to handle saving a book to our database
+    const handleSaveTransaction = async (bookId) => {
+        // find the transaction  in `savedTransaction` state by the matching id
+        // const transactionToSave = searchedBooks.find((book) => book.bookId === bookId);
+
+        // get token
+        const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+        if (!token) {
+            return false;
+        }
+
+        try {
+            const { data } = await saveTransaction({
+                variables: { input: { ...bookToSave } },
+            });
+
+            // if transaction successfully saves to user's account, save transaction id to state
+            setSaveTransactionIds([...saveTransactionIds, bookToSave.bookId]);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+
 
 
     // this is the react and material ui components that are rendered
@@ -178,14 +218,14 @@ const Dashboard = () => {
                         </Grid>
                         {/* Date Method dropdown*/}
                         <Grid item xs={12} sm={6}>
-                            <FormControl sx={{ width: 300 }} >
-                                <InputLabel id="date-label">Date</InputLabel>
+                            <FormControl sx={{ width: 300 }}>
+                                <InputLabel shrink={true} >Date</InputLabel>
                                 <OutlinedInput
+                                    type="date"
                                     id="date-select"
                                     name="Date"
                                     value={transactionFormData.Date}
                                     label="Date"
-                                    type="date"
                                     onChange={handleInputChange}>
 
 

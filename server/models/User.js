@@ -33,8 +33,7 @@ const userSchema = new Schema(
     {
         toJSON: {
             virtuals: true,
-        },
-        id: false,
+        }
     }
 );
 
@@ -51,7 +50,8 @@ userSchema
         const lastName = v.split(' ')[1];
         this.set({ firstName, lastName })
     });
-
+    
+// custom method to compare and validate password for logging in
 userSchema.methods.isCorrectPassword = async function (password) {
     return bcrypt.compare(password, this.password);
 };

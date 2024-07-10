@@ -22,15 +22,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
+
+
+import { useQuery, useMutation } from "@apollo/client";
+import Auth from "../../utils/auth"
+import { GET_ME } from "../../utils/queries";
+import { REMOVE_TRANSACTION } from "../../utils/mutations";
+
 // the data that comes from the user input or database
-function createData(id,description, amount, category, paymentMethod, date) {
+function createData(id, description, amount, category, paymentMethod, date) {
     return { id, description, amount, category, paymentMethod, date };
 }
 
 // rows in the table with input from user or database
 const rows = [
-    createData(1,'TV', 250, "Entertainment", "Credit Card", "4-25-2024"),
-    createData(2,'Salary', 1500, "Salary", "Bank Transfer", "3-31-2024"),
+    createData(1, 'TV', 250, "Entertainment", "Credit Card", "4-25-2024"),
+    createData(2, 'Salary', 1500, "Salary", "Bank Transfer", "3-31-2024"),
 ];
 
 // this is next two functions help organize the table
@@ -157,6 +164,33 @@ EnhancedTableHead.propTypes = {
 function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
+    const [removeTransaction] = useMutation(REMOVE_TRANSACTION)
+
+    const handleDeleteTransaction = async (_id) => {
+        const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+        if (!token) {
+            return false;
+        }
+
+        try {
+            const response = await removeTransaction({
+                variables: { _id }
+            });
+
+            if (!response.ok) {
+                throw new Error('something went wrong!');
+            }
+
+            // upon success, remove book's id from localStorage
+            removeTransaction(_id);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+
+
     return (
         <Toolbar
             sx={{
@@ -192,7 +226,7 @@ function EnhancedTableToolbar(props) {
                 // the delete button icon
                 // remove transaction
                 <Tooltip title="Delete">
-                    <IconButton>
+                    <IconButton onClick={() => handleDeleteTransaction(Transaction._id)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -213,10 +247,23 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
+
+
+
+
+
+
+// table with all the transactions 
 export default function TransactionTable() {
 
+    const {loading, data} = useQuery(GET_ME);
+    let userData = data?.me|| {};
+
+
+
+
     const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('calories');
+    const [orderBy, setOrderBy] = useState('transactions');
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
@@ -284,6 +331,12 @@ export default function TransactionTable() {
         [order, orderBy, page, rowsPerPage],
     );
 
+
+// if data isn't here yet, say so
+    if (loading) {
+        return <h2>LOADING...</h2>;
+    }
+    
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
@@ -317,7 +370,7 @@ export default function TransactionTable() {
                                         tabIndex={-1}
                                         key={row.id}
                                         selected={isItemSelected}
-                                        sx={{ cursor: 'pointer',}}
+                                        sx={{ cursor: 'pointer', }}
                                     >
                                         <TableCell padding="checkbox">
                                             <Checkbox
@@ -370,8 +423,8 @@ export default function TransactionTable() {
             </Paper>
             {/* the dense padding switch */}
             <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} />}
-                label="Dense padding"
+                control={<Switch checked={dense} onChange={handleChangeDense} sx={{mr:1}} />}
+                label="Condense Table"
             />
         </Box>
     );
