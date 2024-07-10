@@ -8,6 +8,7 @@ export const GET_ME = gql`
             lastName
             email
             Transactions {
+                _id
                 Amount
                 Description
                 Date
