@@ -56,37 +56,34 @@ const resolvers = {
             return { token, user };
         },
         //  this creates a transaction
-        addTransaction: async (parent, { input }, context) => {
+        addTransaction: async (parent, { input, _id}, context) => {
             // destructing the input from the client side
             const { Amount, Description, Date, Categories } = input; 
-
             
 
-                if (context.user) {
-                    
-                    // this creates a new transaction
-                    const transaction = await Transaction.create({
-                        Amount, Description, Date, Categories
-                    });
-
-                    // // this creates a new category
-                    // const category = await Category.create({
-                    //     Categories
-                    // })
-
-                    const updatedUser = await User.findOneAndUpdate(
-                        { _id: context.user._id },
-                        { $push: { transactions: transaction._id }},
-                        { new: true, runValidators: true }
-                    ).populate('transactions'); // Populate the transactions array
-
-
-                    return updatedUser;
-
-
-                    
-
-
+            if (context.user) {
+                // Find the category by its string value
+                const category = await Category.findOne({ categoryType: Categories});
+                if (!category) {
+                    throw new Error('Category not found');
+                }
+                console.log(Category.categoryType)
+                // This creates a new transaction
+                const transaction = await Transaction.create({
+                    Amount,
+                    Description,
+                    Date,
+                    Categories: category._id
+                });
+        
+                // Update the user's transactions array
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $push: { transactions: transaction._id } },
+                    { new: true, runValidators: true }
+                ).populate('transactions'); // Populate the transactions array
+        
+                return updatedUser;
                 }
                 throw AuthenticationError;
             },
