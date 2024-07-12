@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import TransactionList from "./TransactionList"
+import TransactionList from "./TransactionList";
 import Container from "@mui/material/Container";
-import { Typography } from "@mui/material";
+import {Typography} from "@mui/material";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
@@ -10,53 +10,51 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Box from '@mui/material/Box';
-
-// importing the auth and localStorage
-
-import Auth from "../../utils/auth";
-import { saveTransactionIds, getTransactionIds } from "../../utils/localStorage"
-
-
+import { useMutation, useQuery } from "@apollo/client";
 // importing Apollo hook and mutation
 import { ADD_TRANSACTION } from "../../utils/mutations";
 import { GET_ME } from "../../utils/queries";
-import { useMutation, useQuery } from "@apollo/client";
-
+// importing the auth and localStorage
+import Auth from "../../utils/auth";
+import { saveTransactionIds, getTransactionIds } from "../../utils/localStorage";
 
 const Dashboard = () => {
-
-    //getting the user data for user firstname.
-    const { data } = useQuery(GET_ME);
-    let userData = data?.me || {};
-
-    console.log("userdashboard", userData)
-
+    const { loading, error, data } = useQuery(GET_ME);
 
     // create state to hold saved transaction id values
+    const [savedTransactionIds, setSavedTransactionIds] = useState(getTransactionIds());
+    // set up useEffect hook to save `Transaction._id` list to localStorage on component unmount
+    useEffect(() => {
+        return () => {
+            saveTransactionIds(savedTransactionIds); // Assuming saveTransactionIds is a function that saves to localStorage
+        };
+    }, [savedTransactionIds]);
 
-    const [saveTransactionIds, setSaveTransactionIds] = useState(getTransactionIds());
-
-    // set up useEffect hook to save `TransactionIds` list to localStorage on component unmount
-
-    // useEffect(() => {
-    //     return () => saveTransactionIds(saveTransactionIds);
-    // });
 
     //setting up the ADD_TRANSACTION Mutation
-
-    const [addTransaction] = useMutation(ADD_TRANSACTION)
-
+    const [addTransaction] = useMutation(ADD_TRANSACTION);
 
     // this is the input value of the forms
-    const [transactionFormData, setTransactionFormData] = useState(
-        { Description: '', Amount: '', Categories: '', Date: '' })
-
+    const [transactionFormData, setTransactionFormData] = useState({
+        Description: '',
+        Amount: '',
+        Categories: '',
+        Date: dayjs(),// Initialize Date with current date using dayjs
+    });
 
     // handles the input change 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setTransactionFormData({ ...transactionFormData, [name]: value });
+    };
+    // handles the date input
+    const handleDateChange = (newValue) => {
+        setTransactionFormData({ ...transactionFormData, Date: newValue });
     };
 
 
@@ -64,88 +62,81 @@ const Dashboard = () => {
     const handleAddTransaction = async (event) => {
         event.preventDefault();
 
-
         const token = Auth.loggedIn() ? Auth.getToken() : null;
 
         if (!token) {
             return false;
         }
 
-        // getting the inputs and seperating them so that we can parse float the amount
+        const amountValue = transactionFormData.Amount.trim();
 
+        if (!amountValue) {
+            console.error("Amount is empty or invalid:", transactionFormData.Amount);
+            return;
+        }
+
+        // getting the inputs and seperating them so that we can parse float the amount
         const Amount = parseFloat(parseFloat(transactionFormData.Amount).toFixed(2));
         const Description = transactionFormData.Description;
         const Categories = transactionFormData.Categories;
-        const Date = transactionFormData.Date;
+        const Date = transactionFormData.Date.toISOString(); // Ensure date is in ISO format
 
-        if (!handleInputChange) {
-            return false;
-        }
-
-
+        //uses the addTransaction mutation
         try {
-            
             const response = await addTransaction({
                 variables: { input: { Description, Amount, Categories, Date } }
             });
 
-
-            if (!response.data) {
-                throw new Error('something went wrong!');
+            if (!response.data || !response.data.addTransaction) {
+                throw new Error("Transaction creation failed.");
             }
 
             console.log("Transaction added successfully:", response.data);
+
+            //Update savedTransactionIds and save to localStorage
+            const newTransactionId = response.data.addTransaction._id
+            const updatedTransactionIds = [...savedTransactionIds, newTransactionId];
+            setSavedTransactionIds(updatedTransactionIds);
         } catch (err) {
             console.error("Error adding transaction:", err);
         }
-
-
+        // resetting the input form to empty 
         setTransactionFormData({
             Description: '',
             Amount: '',
             Categories: '',
-            Date: ''
-        })
+            Date: dayjs(), // Reset Date to current date using dayjs
+        });
     };
+    if (loading) return <Typography color="primary" sx={{ mt: 15, textAlign: "center" }} variant="h6">Loading...</Typography>;
+    if (error) {
+        console.error("Error fetching data:", error);
+        return <Typography color="error" sx={{ mt: 15, textAlign: "center" }}>Error fetching data!</Typography>;
+    }
 
-
+    const userData = data?.me || {};
 
 
     // this is the react and material ui components that are rendered
     return (
         <Container maxWidth="md" sx={{ mt: 15, textAlign: "center" }}>
-
             <Box component="main" sx={{ p: 2, border: '1px solid grey' }}>
-
                 {/* The Budget total  */}
                 <Box component="div" sx={{ textAlign: 'center', m: 2 }}>
                     <Typography variant="h4">
                         {`Hello, ${userData.firstName} this is your current budget:`}
-
                     </Typography>
-
-
                     {/* This is the total budget */}
-                    <Typography
-                        variant="h3"
-                        fontFamily="monospace"
-                        color="primary"
-                    >
+                    <Typography variant="h3" fontFamily="monospace" color="primary">
                         $400.00
                     </Typography>
-
                 </Box>
 
-
-                {/* All the transaction form input */}
                 <Box component="form" onSubmit={handleAddTransaction} sx={{ textAlign: "center" }}>
-
+                    {/* Description input box */}
                     <Grid container spacing={2}>
-
-                        {/* Description input box */}
                         <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth sx={{ width: 300 }}
-                            >
+                            <FormControl fullWidth sx={{ width: 300 }}>
                                 <InputLabel>Description</InputLabel>
                                 <OutlinedInput
                                     value={transactionFormData.Description}
@@ -153,15 +144,12 @@ const Dashboard = () => {
                                     name="Description"
                                     id="description"
                                     label="description"
-
                                 />
                             </FormControl>
                         </Grid>
-
                         {/* Amount inputbox */}
                         <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth sx={{ width: 300 }}
-                            >
+                            <FormControl fullWidth sx={{ width: 300 }}>
                                 <InputLabel>Amount</InputLabel>
                                 <OutlinedInput
                                     type="number"
@@ -172,7 +160,6 @@ const Dashboard = () => {
                                     id="amount"
                                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                     label="amount"
-
                                 />
                             </FormControl>
                         </Grid>
@@ -194,40 +181,35 @@ const Dashboard = () => {
                                     <MenuItem value={"Utilities"}>Utilities</MenuItem>
                                     <MenuItem value={"Entertainment"}>Entertainment</MenuItem>
                                     <MenuItem value={"Other"}>Other</MenuItem>
-
                                 </Select>
                             </FormControl>
                         </Grid>
-                        {/* Date Method dropdown*/}
                         <Grid item xs={12} sm={6}>
-                            <FormControl sx={{ width: 300 }}>
-                                <InputLabel shrink={true} >Date</InputLabel>
-                                <OutlinedInput
-                                    type="date"
-                                    id="date-select"
-                                    name="Date"
-                                    value={transactionFormData.Date}
-                                    label="Date"
-                                    onChange={handleInputChange}>
-
-
-                                </OutlinedInput>
+                            <FormControl fullWidth sx={{ width: 300 }}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DatePicker
+                                        label="Date"
+                                        value={transactionFormData.Date}
+                                        onChange={handleDateChange}
+                                    />
+                                </LocalizationProvider>
                             </FormControl>
                         </Grid>
                     </Grid>
                     {/* Add button to add transactions */}
-
-                    <Button type="submit" variant="contained" sx={{ m: 2 }}
-                        disabled={!(transactionFormData.Description && transactionFormData.Amount && transactionFormData.Categories && transactionFormData.Date)}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ m: 2 }}
+                        disabled={!(transactionFormData.Description && transactionFormData.Amount && transactionFormData.Categories && transactionFormData.Date)}
+                    >
                         ADD
                     </Button>
-
                 </Box>
 
                 {/* This is the table with all the transaction values */}
                 <TransactionList />
             </Box>
-
         </Container>
     );
 };

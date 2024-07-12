@@ -38,6 +38,7 @@ export const ADD_TRANSACTION = gql`
             lastName
             email
             transactions {
+                _id
                 Amount
                 Description
                 Date

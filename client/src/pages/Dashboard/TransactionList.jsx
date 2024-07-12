@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -21,24 +21,16 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-
-
-
 import { useQuery, useMutation } from "@apollo/client";
 import Auth from "../../utils/auth"
 import { GET_ME } from "../../utils/queries";
 import { REMOVE_TRANSACTION } from "../../utils/mutations";
+import dayjs from 'dayjs';
 
-// the data that comes from the user input or database
-function createData(id, description, amount, category, date) {
-    return { id, description, amount, category,date };
-}
-
-// rows in the table with input from user or database
-const rows = [
-    createData(1, 'TV', 250, "Entertainment","4-25-2024"),
-    createData(2, 'Salary', 1500, "Salary", "3-31-2024"),
-];
+const formatTransactionDate = (timestamp) => {
+    const dateObject = new Date(parseInt(timestamp)); // Convert timestamp to Date object
+    return dayjs(dateObject).format('MM/DD/YYYY'); // Format date using dayjs
+}; 
 
 // this is next two functions help organize the table
 function descendingComparator(a, b, orderBy) {
@@ -156,7 +148,8 @@ EnhancedTableHead.propTypes = {
 
 // function to give the select and delete toolbars
 function EnhancedTableToolbar(props) {
-    const { numSelected } = props;
+    const { numSelected, selectedTransactions } = props;
+    console.log(selectedTransactions)
 
     const [removeTransaction] = useMutation(REMOVE_TRANSACTION)
 
@@ -172,12 +165,13 @@ function EnhancedTableToolbar(props) {
                 variables: { _id }
             });
 
-            if (!response.ok) {
-                throw new Error('something went wrong!');
+            if (response.data.removeTransaction) {
+                // Handle success
+                console.log('Transaction deleted successfully.');
+            } else {
+                // Handle failure
+                console.error('Failed to delete transaction.');
             }
-
-            // upon success, remove book's id from localStorage
-            removeTransaction(_id);
         } catch (err) {
             console.error(err);
         }
@@ -203,7 +197,7 @@ function EnhancedTableToolbar(props) {
                     variant="subtitle1"
                     component="div"
                 >
-                    {numSelected} selected
+                    {numSelected} selectedTransactions
                 </Typography>
             ) : (
                 <Typography
@@ -216,11 +210,8 @@ function EnhancedTableToolbar(props) {
                 </Typography>
             )}
             {numSelected > 0 ? (
-
-                // the delete button icon
-                // remove transaction
                 <Tooltip title="Delete">
-                    <IconButton onClick={() => handleDeleteTransaction(Transaction._id)}>
+                    <IconButton onClick={() => handleDeleteTransaction(selectedTransactions)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -239,24 +230,18 @@ function EnhancedTableToolbar(props) {
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
+    selectedTransactions: PropTypes.array.isRequired
 };
-
-
-
-
 
 
 
 // table with all the transactions 
 export default function TransactionTable() {
 
-    const {loading, data} = useQuery(GET_ME);
-    let userData = data?.me|| {};
-
-
+    const { loading, data, error } = useQuery(GET_ME);
 
     const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('transactions');
+    const [orderBy, setOrderBy] = useState('description');
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
@@ -270,19 +255,19 @@ export default function TransactionTable() {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
+            const newSelected = data?.me?.transactions.map((transaction) => transaction._id);
             setSelected(newSelected);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, id) => {
-        const selectedIndex = selected.indexOf(id);
+    const handleClick = (event, _id) => {
+        const selectedIndex = selected.indexOf(_id);
         let newSelected = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
+            newSelected = newSelected.concat(selected, _id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -309,31 +294,35 @@ export default function TransactionTable() {
         setDense(event.target.checked);
     };
 
-    const isSelected = (id) => selected.indexOf(id) !== -1;
+    const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
+
+    // adding the loading and data error
+    if (loading) {
+        return <Typography color="primary" sx={{ mt: 15, textAlign: "center" }} variant="h6">Loading...</Typography>;
+    }
+
+    if (error) {
+        return <Typography color="Error" sx={{ mt: 15, textAlign: "center" }} variant="h6">Error loading transactions.</Typography>;
+    }
+
+    if (!data || !data.me || !data.me.transactions) {
+        return <Typography color="Error" sx={{ mt: 15, textAlign: "center" }} variant="h6">No transactions found.</Typography>;
+    }
+
+    const transactions = data.me.transactions;
+    console.log('Transactions:', data.me.transactions[12].Date)
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+        rowsPerPage - Math.min(rowsPerPage, transactions.length - page * rowsPerPage);
 
-    const visibleRows = useMemo(
-        () =>
-            stableSort(rows, getComparator(order, orderBy)).slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage,
-            ),
-        [order, orderBy, page, rowsPerPage],
-    );
+    const visibleRows = stableSort(transactions, getComparator(order, orderBy))
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-
-// if data isn't here yet, say so
-    if (loading) {
-        return <h2>LOADING...</h2>;
-    }
-    
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} />
+                <EnhancedTableToolbar numSelected={selected.length} selectedTransactions={selected} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -346,22 +335,22 @@ export default function TransactionTable() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
+                            rowCount={transactions.length}
                         />
                         <TableBody>
                             {visibleRows.map((row, index) => {
-                                const isItemSelected = isSelected(row.id);
+                                const isItemSelected = isSelected(row._id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
                                     // This are the table rows with the checkboxes
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.id)}
+                                        onClick={(event) => handleClick(event, row._id)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.id}
+                                        key={row._id}
                                         selected={isItemSelected}
                                         sx={{ cursor: 'pointer', }}
                                     >
@@ -380,12 +369,12 @@ export default function TransactionTable() {
                                             id={labelId}
                                             scope="row"
                                             padding="none">
-                                        {/* userData.transactions.description */}
-                                            {row.description}
+                                            {/* userData.transactions.description */}
+                                            {row.Description}
                                         </TableCell>
-                                        <TableCell align="right">{row.amount}</TableCell>
-                                        <TableCell align="right">{row.category}</TableCell>
-                                        <TableCell align="right">{row.date}</TableCell>
+                                        <TableCell align="right">{row.Amount}</TableCell>
+                                        <TableCell align="right">{row.Categories[0].categoryType}</TableCell>
+                                        <TableCell align="right">{formatTransactionDate(row.Date)}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -406,7 +395,7 @@ export default function TransactionTable() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={transactions.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -415,7 +404,7 @@ export default function TransactionTable() {
             </Paper>
             {/* the dense padding switch */}
             <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} sx={{mr:1}} />}
+                control={<Switch checked={dense} onChange={handleChangeDense} sx={{ mr: 1 }} />}
                 label="Condense Table"
             />
         </Box>
