@@ -1,20 +1,20 @@
 [
     {
-        "categoryName": "Food"
+        "categoryType": "Food"
     },
     {
-        "categoryName": "Rent"
+        "categoryType": "Rent"
     },
     {
-        "categoryName": "Income"
+        "categoryType": "Income"
     },
     {
-        "categoryName": "Utilities"
+        "categoryType": "Utilities"
     },
     {
-        "categoryName": "Entertainment"
+        "categoryType": "Entertainment"
     },
     {
-        "categoryName": "Other"
+        "categoryType": "Other"
     }
 ]

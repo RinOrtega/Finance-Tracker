@@ -3,6 +3,7 @@ const Category = require('../models/Category');
 const { signToken, AuthenticationError } = require('../utils/auth');
 
 
+
 const resolvers = {
     Query: {
         getUser: async (parent, { _id }) => {
@@ -12,22 +13,36 @@ const resolvers = {
             return Transaction.findById(_id);
         },
 
-        // logs in a user
+        // logs in a user and 
         me: async (parent, args, context) => {
-            // check if users exist
-            if (context.user) {
-                // looks for user by id and looks at the password for that user
-                const userData = await User.findOne({ _id: context.user._id }).select(
-                    "-__v -password"
-                );
-                
-                return userData;
+            // Check if user is authenticated
+            if (!context.user) {
+                throw AuthenticationError;
             }
-            throw AuthenticationError;
-        },
+
+            try {
+                // Fetch user data excluding password
+                const userData = await User.findOne({ _id: context.user._id }).select('-__v -password').populate({
+                    path: 'transactions',
+                    populate: {
+                        path: 'Categories',
+                        model: 'Category'
+                    }
+                });
+                ;
+
+                // If user data is not found
+                if (!userData) {
+                    throw new Error('User not found');
+                }
+
+                return userData;
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
     },
 
-    // fix 
     Mutation: {
         // this creates a user 
         addUser: async (parent, { firstName, lastName, email, password }) => {
@@ -42,14 +57,13 @@ const resolvers = {
             const user = await User.findOne({ email });
             console.log("user", user);
             if (!user) {
-                throw new AuthenticationError("Incorrect email");
+                throw AuthenticationError;
             }
-
 
             const correctPw = await user.isCorrectPassword(password);
 
             if (!correctPw) {
-                throw new AuthenticationError("Incorrect Password");
+                throw AuthenticationError;
             }
 
             const token = signToken(user);
@@ -58,59 +72,74 @@ const resolvers = {
         //  this creates a transaction
         addTransaction: async (parent, { input }, context) => {
             // destructing the input from the client side
-            const { Amount, Description, Date, Categories } = input; 
+            const { Amount, Description, Date, Categories } = input;
 
-            
+            if (context.user) {
+                try {
+                    // Find the category by its string value
+                    const category = await Category.findOne({ categoryType: Categories });
+                    if (!category) {
+                        throw new Error('Category not found');
+                    }
 
-                if (context.user) {
-                    
-                    // this creates a new transaction
+
+                    // This creates a new transaction
                     const transaction = await Transaction.create({
-                        Amount, Description, Date, Categories
+                        Amount,
+                        Description,
+                        Date,
+                        Categories: category._id
                     });
 
-                    // // this creates a new category
-                    // const category = await Category.create({
-                    //     Categories
-                    // })
+                    // Update the user's transactions array
+                    const updatedUser = await User.findOneAndUpdate(
+                        { _id: context.user._id },
+                        { $push: { transactions: transaction._id } },
+                        { new: true, runValidators: true }
+                    )
+                        .populate({
+                            path: 'transactions',
+                            populate: {
+                                path: 'Categories',
+                                model: 'Category'
+                            }
+                        });
+
+                    return updatedUser;
+                } catch (error) {
+                    console.error('Error adding transaction:', error);
+                    throw new Error('Failed to add transaction');
+                }
+            } else {
+                throw new AuthenticationError('User not authenticated');
+            }
+        },
+
+        // this removes the transaction  from the user when delete button is pressed
+        removeTransaction: async (parent, { _id }, context) => {
+            if (context.user) {
+                try {
+                    const transaction = await Transaction.findOneAndDelete(
+                        {
+                            _id
+                        });
 
                     const updatedUser = await User.findOneAndUpdate(
                         { _id: context.user._id },
-                        { $push: { transactions: transaction._id }},
-                        { new: true, runValidators: true }
-                    ).populate('transactions'); // Populate the transactions array
-
+                        { $pull: { transactions: { _id: _id } } },
+                        { new: true }
+                    );
 
                     return updatedUser;
-
-
-                    
-
-
+                } catch (error) {
+                    console.error('Error removing transaction:', error);
+                    throw error; // Throw error if any occurs during deletion
                 }
+            } else {
                 throw AuthenticationError;
-            },
-
-                // this removes the transaction  from the user when delete button is pressed
-                removeTransaction: async (parent, { _id }, context) => {
-                    if (context.user) {
-                        const transaction = await Transaction.findOneAndDelete(
-                            {
-                                _id: transaction._id,
-                                transactionUser: context.user
-                            });
-
-                        await User.findOneAndUpdate(
-                            { _id: context.user._id },
-                            { $pull: { transactions: { _id: _id } } },
-                            { new: true }
-                        );
-
-                        return transaction;
-                    }
-                    throw AuthenticationError;
-                },
+            }
+        }
     }
-    };
+};
 
-    module.exports = resolvers;
+module.exports = resolvers;

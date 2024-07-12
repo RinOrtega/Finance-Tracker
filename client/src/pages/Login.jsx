@@ -45,7 +45,6 @@ const Copyright = (props) => {
 const Login = () => {
 
     const [userFormData, setUserFormData] = useState({ email: '', password: '' });
-    const [validated] = useState(false);
     const [open, setOpen] = useState(false);
 
     // declaring the LOGIN_USER with useMutation
@@ -118,7 +117,7 @@ const Login = () => {
                 </Typography>
 
                 {/*This box contains ther form to enter email and password  */}
-                <Box component="form" noValidate validated={validated} onSubmit={handleSubmit}  sx={{ mt: 1 }}>
+                <Box component="form" noValidate  onSubmit={handleSubmit}  sx={{ mt: 1 }}>
                     <Collapse in={open}>
                         <Alert action={
                             <IconButton onClick={() => { setOpen(false); }}>

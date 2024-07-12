@@ -14,11 +14,12 @@ const transactionSchema =  new Schema(
             type: Date,
             default: Date.now,
         },
-        Category: 
+        Categories: [
             {
                 type: Schema.Types.ObjectId,
                 ref: 'Category',
             }, 
+        ],
     }
 )
 const Transaction = model('Transaction', transactionSchema);
