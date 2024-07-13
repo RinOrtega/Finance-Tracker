@@ -83,7 +83,7 @@ const Dashboard = () => {
         const expenseCategories = ["Food", "Rent", "Utilities", "Entertainment", "Other"];
         // Determine whether the category is an expense or income
         const isExpense = expenseCategories.includes(transactionFormData.Categories);
-        
+
 
 
         // Adjust amount based on category
@@ -141,7 +141,7 @@ const Dashboard = () => {
 
     // this is the react and material ui components that are rendered
     return (
-        <Container maxWidth="md" sx={{ mt: 15}}>
+        <Container maxWidth="md" sx={{ mt: 15 }}>
             <Box component="main" sx={{ p: 2, border: '1px solid grey' }}>
                 {/* The Budget total  */}
                 <Box component="div" sx={{ textAlign: 'center', m: 2 }}>
@@ -149,14 +149,16 @@ const Dashboard = () => {
                         {`Hello, ${userData.firstName} this is your current budget:`}
                     </Typography>
                     {/* This is the total budget */}
-                    <Typography variant="h3" fontFamily="monospace" color="primary">
+                    <Typography variant="h3" fontFamily="monospace" sx={{
+                        color: totalBalance < 0 ? 'error.main' : 'success.main',
+                    }}>
                         ${totalBalance.toFixed(2)}
                     </Typography>
                 </Box>
 
                 <Box component="form" onSubmit={handleAddTransaction} sx={{ textAlign: "center" }}>
                     {/* Description input box */}
-                    <Grid container spacing={2}justifyContent="center">
+                    <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12} sm={6}>
                             <FormControl fullWidth sx={{ width: 300 }}>
                                 <InputLabel>Description</InputLabel>
