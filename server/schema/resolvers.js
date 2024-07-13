@@ -119,24 +119,38 @@ const resolvers = {
         removeTransaction: async (parent, { _id }, context) => {
             if (context.user) {
                 try {
-                    const transaction = await Transaction.findOneAndDelete(
-                        {
-                            _id
-                        });
+                    const transaction = await Transaction.findOneAndDelete({ _id });
+
+                    if (!transaction) {
+                        throw new Error('Transaction not found');
+                    }
 
                     const updatedUser = await User.findOneAndUpdate(
                         { _id: context.user._id },
                         { $pull: { transactions: { _id: _id } } },
                         { new: true }
-                    );
+                    ).populate({
+                        path: 'transactions',
+                        populate: {
+                            path: 'Categories',
+                            model: 'Category'
+                        }
+                    });
+
+                    // Ensure all transactions have a non-null Amount field before returning
+                    updatedUser.transactions.forEach(transaction => {
+                        if (transaction.Amount === null || transaction.Amount === undefined) {
+                            transaction.Amount = 0; // Set a default value or handle appropriately
+                        }
+                    });
 
                     return updatedUser;
                 } catch (error) {
                     console.error('Error removing transaction:', error);
-                    throw error; // Throw error if any occurs during deletion
+                    throw new Error('Error removing transaction');
                 }
             } else {
-                throw AuthenticationError;
+                throw new AuthenticationError('Not authenticated');
             }
         }
     }
