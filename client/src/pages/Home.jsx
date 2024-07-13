@@ -1,22 +1,22 @@
-import React from "react";
 import SplineRobot from "../components/Robot"
-
-import Container from "@mui/material/Container";
 import { Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 const Home = () => {
 
     return (
 
-            <Box component="section" sx={{ p:10 }}>
-                
-                <Typography sx={{textAlign:'center', pointerEvents:'none'}}>
-                    <h1 className="">Welcome!</h1>
-                </Typography>
-                <Box sx={{borderRadius:3, border: "5px, solid, black" }}>
-                <SplineRobot/>
-                </Box>
+        <Box component="main" sx={{ pt: 15, pb:15 }}>
+            <Typography variant="h2" sx={{ textAlign: 'center', pointerEvents: 'none' }}>
+                Welcome!
+            </Typography>
+            <Box sx={{ m: 5, borderRadius: 3, border: "5px, solid, black" }}>
+                <SplineRobot />
+
             </Box>
+            <Typography variant="h6" sx={{ textAlign: 'center', pointerEvents: 'none' }}>
+            Find the balance between your needs, wants and savings.
+            </Typography>
+        </Box>
 
     );
 };

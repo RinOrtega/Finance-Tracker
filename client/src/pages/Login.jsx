@@ -78,7 +78,7 @@ const Login = () => {
             if (!response.data) {
                 throw new Error('something went wrong!');
             }
-            console.log(response.data.login);
+           
             const { token, user } = await response.data.login;
             console.log(user);
             Auth.login(token);
