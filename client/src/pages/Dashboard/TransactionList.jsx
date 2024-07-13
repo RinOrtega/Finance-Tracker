@@ -30,7 +30,7 @@ import dayjs from 'dayjs';
 const formatTransactionDate = (timestamp) => {
     const dateObject = new Date(parseInt(timestamp)); // Convert timestamp to Date object
     return dayjs(dateObject).format('MM/DD/YYYY'); // Format date using dayjs
-}; 
+};
 
 // this is next two functions help organize the table
 function descendingComparator(a, b, orderBy) {
@@ -148,36 +148,7 @@ EnhancedTableHead.propTypes = {
 
 // function to give the select and delete toolbars
 function EnhancedTableToolbar(props) {
-    const { numSelected, selectedTransactions } = props;
-    console.log(selectedTransactions)
-
-    const [removeTransaction] = useMutation(REMOVE_TRANSACTION)
-
-    const handleDeleteTransaction = async (_id) => {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-        if (!token) {
-            return false;
-        }
-
-        try {
-            const response = await removeTransaction({
-                variables: { _id }
-            });
-
-            if (response.data.removeTransaction) {
-                // Handle success
-                console.log('Transaction deleted successfully.');
-            } else {
-                // Handle failure
-                console.error('Failed to delete transaction.');
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-
+    const { numSelected, selectedTransactions, onDelete } = props;
 
     return (
         <Toolbar
@@ -211,7 +182,7 @@ function EnhancedTableToolbar(props) {
             )}
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton onClick={() => handleDeleteTransaction(selectedTransactions)}>
+                    <IconButton onClick={() => onDelete(selectedTransactions)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -230,7 +201,8 @@ function EnhancedTableToolbar(props) {
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
-    selectedTransactions: PropTypes.array.isRequired
+    selectedTransactions: PropTypes.array.isRequired,
+    onDelete: PropTypes.func.isRequired,
 };
 
 
@@ -238,7 +210,20 @@ EnhancedTableToolbar.propTypes = {
 // table with all the transactions 
 export default function TransactionTable() {
 
-    const { loading, data, error } = useQuery(GET_ME);
+    const { loading, data, error, refetch } = useQuery(GET_ME);
+    const [removeTransaction] = useMutation(REMOVE_TRANSACTION, {
+        // update function that updates the Apollo cache by removing deleted transaction
+        update(cache, { data: { removeTransaction } }) {
+            if (removeTransaction) {
+                const normalizedId = cache.identify({ id: removeTransaction._id, __typename: 'Transaction' });
+                cache.evict({ id: normalizedId });
+                cache.gc();
+            }
+        },
+        // Refetch the GET_ME query to update the cache
+        refetchQueries: [{ query: GET_ME }],
+    });
+
 
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('description');
@@ -296,6 +281,24 @@ export default function TransactionTable() {
 
     const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
+    // hanldes the deletion of a transaction
+    const handleDeleteTransactions = async (_ids) => {
+        const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+        if (!token) {
+            return false;
+        }
+
+        try {
+            for (const _id of _ids) {
+                await removeTransaction({ variables: { _id } });
+            }
+            // After deleting transactions, refetch data to update the table
+            await refetch();
+        } catch (error) {
+            console.error("Error deleting transactions:", error);
+        }
+    };
 
     // adding the loading and data error
     if (loading) {
@@ -311,7 +314,7 @@ export default function TransactionTable() {
     }
 
     const transactions = data.me.transactions;
-    console.log('Transactions:', data.me.transactions[12].Date)
+
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
         rowsPerPage - Math.min(rowsPerPage, transactions.length - page * rowsPerPage);
@@ -322,7 +325,7 @@ export default function TransactionTable() {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} selectedTransactions={selected} />
+                <EnhancedTableToolbar onDelete={handleDeleteTransactions} numSelected={selected.length} selectedTransactions={selected} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -372,7 +375,14 @@ export default function TransactionTable() {
                                             {/* userData.transactions.description */}
                                             {row.Description}
                                         </TableCell>
-                                        <TableCell align="right">{row.Amount}</TableCell>
+                                        <TableCell align="right"><Typography
+                                            component="span"
+                                            sx={{
+                                                color: row.Amount >= 0 ? 'green' : 'red',
+                                            }}
+                                        >
+                                            ${row.Amount.toFixed(2)}
+                                        </Typography></TableCell>
                                         <TableCell align="right">{row.Categories[0].categoryType}</TableCell>
                                         <TableCell align="right">{formatTransactionDate(row.Date)}</TableCell>
                                     </TableRow>

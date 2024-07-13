@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import TransactionList from "./TransactionList";
 import Container from "@mui/material/Container";
-import {Typography} from "@mui/material";
+import { Typography } from "@mui/material";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
@@ -22,6 +22,10 @@ import { GET_ME } from "../../utils/queries";
 // importing the auth and localStorage
 import Auth from "../../utils/auth";
 import { saveTransactionIds, getTransactionIds } from "../../utils/localStorage";
+
+
+
+
 
 const Dashboard = () => {
     const { loading, error, data } = useQuery(GET_ME);
@@ -75,8 +79,22 @@ const Dashboard = () => {
             return;
         }
 
+        // Define expense categories
+        const expenseCategories = ["Food", "Rent", "Utilities", "Entertainment", "Other"];
+        // Determine whether the category is an expense or income
+        const isExpense = expenseCategories.includes(transactionFormData.Categories);
+        
+
+
+        // Adjust amount based on category
+        if (isExpense) {
+            transactionFormData.Amount = -Math.abs(transactionFormData.Amount); // Ensure amount is negative for expenses
+        } else {
+            transactionFormData.Amount = Math.abs(transactionFormData.Amount); // Ensure amount is positive for income
+        }
         // getting the inputs and seperating them so that we can parse float the amount
         const Amount = parseFloat(parseFloat(transactionFormData.Amount).toFixed(2));
+
         const Description = transactionFormData.Description;
         const Categories = transactionFormData.Categories;
         const Date = transactionFormData.Date.toISOString(); // Ensure date is in ISO format
@@ -115,11 +133,15 @@ const Dashboard = () => {
     }
 
     const userData = data?.me || {};
+    const transactions = userData.transactions;
+
+    // Calculate total balance
+    const totalBalance = transactions.reduce((acc, transaction) => acc + transaction.Amount, 0);
 
 
     // this is the react and material ui components that are rendered
     return (
-        <Container maxWidth="md" sx={{ mt: 15, textAlign: "center" }}>
+        <Container maxWidth="md" sx={{ mt: 15}}>
             <Box component="main" sx={{ p: 2, border: '1px solid grey' }}>
                 {/* The Budget total  */}
                 <Box component="div" sx={{ textAlign: 'center', m: 2 }}>
@@ -128,13 +150,13 @@ const Dashboard = () => {
                     </Typography>
                     {/* This is the total budget */}
                     <Typography variant="h3" fontFamily="monospace" color="primary">
-                        $400.00
+                        ${totalBalance.toFixed(2)}
                     </Typography>
                 </Box>
 
                 <Box component="form" onSubmit={handleAddTransaction} sx={{ textAlign: "center" }}>
                     {/* Description input box */}
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2}justifyContent="center">
                         <Grid item xs={12} sm={6}>
                             <FormControl fullWidth sx={{ width: 300 }}>
                                 <InputLabel>Description</InputLabel>
@@ -148,7 +170,7 @@ const Dashboard = () => {
                             </FormControl>
                         </Grid>
                         {/* Amount inputbox */}
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={6} >
                             <FormControl fullWidth sx={{ width: 300 }}>
                                 <InputLabel>Amount</InputLabel>
                                 <OutlinedInput
@@ -164,7 +186,7 @@ const Dashboard = () => {
                             </FormControl>
                         </Grid>
                         {/* Select drop down Category */}
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={6} >
                             <FormControl sx={{ width: 300 }}>
                                 <InputLabel id="category-label">Category</InputLabel>
                                 <Select
@@ -184,7 +206,7 @@ const Dashboard = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={6} >
                             <FormControl fullWidth sx={{ width: 300 }}>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DatePicker
@@ -200,7 +222,7 @@ const Dashboard = () => {
                     <Button
                         type="submit"
                         variant="contained"
-                        sx={{ m: 2 }}
+                        sx={{ m: 1 }}
                         disabled={!(transactionFormData.Description && transactionFormData.Amount && transactionFormData.Categories && transactionFormData.Date)}
                     >
                         ADD
