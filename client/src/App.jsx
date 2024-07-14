@@ -94,9 +94,7 @@ function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
 }
 
 ToggleCustomTheme.propTypes = {
-  showCustomTheme: PropTypes.shape({
-    valueOf: PropTypes.func.isRequired,
-  }).isRequired,
+  showCustomTheme: PropTypes.bool.isRequired,
   toggleCustomTheme: PropTypes.func.isRequired,
 };
 

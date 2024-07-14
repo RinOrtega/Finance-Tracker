@@ -141,8 +141,8 @@ const Dashboard = () => {
 
     // this is the react and material ui components that are rendered
     return (
-        <Container maxWidth="md" sx={{ mt: 15 }}>
-            <Box component="main" sx={{ p: 2, border: '1px solid grey' }}>
+        <Container maxWidth="md" sx={{ pt: 15,pb:15 }}>
+            <Box component="main" sx={{ p: 2, border: '2px solid blue', borderRadius:"10px" }}>
                 {/* The Budget total  */}
                 <Box component="div" sx={{ textAlign: 'center', m: 2 }}>
                     <Typography variant="h4">
