@@ -9,8 +9,29 @@ Built With:
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) 	![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) 	![Apollo-GraphQL](https://img.shields.io/badge/-ApolloGraphQL-311C87?style=for-the-badge&logo=apollo-graphql)
 
 ## Usage
+If you need to download the repo, be sure to install all dependencies and make sure to use all seeds by using "npm run seed" in the terminal. The application will not work without the seeds.
 
+Users will start at the home page where they can login or sign-up, new users will need to sign-up to be able to create and use the site.
 
+Homepage:
+
+![homepage](./assets/homepage.JPG)
+
+Sign-up page:
+
+![sign-uppage](./assets/signup.JPG)
+
+After signing up users will be able to use CRUD operations to create, read, update, and delete transactions that will be used to help users budget their income and expenses. 
+
+User dashboard:
+
+![dashboard](./assets/dashboard.JPG)
+
+After users are done entering info into there they can go to their user page and see info based off the transactions they entered into there dashboard.
+
+User profile:
+
+![user](./assets/chart.JPG)
 
 ## Contribution
 
@@ -22,11 +43,11 @@ This project was a collabertive effort between:
 
 ## Contact
 
-If you have any questions please forward them here. 
+If you have any questions please forward them to any of the proflies linked in the contribution.  
 
 ## Deployment
 
-You can find the website here: 
+You can find the website here: https://finance-tracker-qi8n.onrender.com/
 
 ## License
 
